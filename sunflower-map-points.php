@@ -33,8 +33,9 @@ add_action('wp_enqueue_scripts', 'load_leaflet_assets');
 
 function leaflet_form_shortcode() {
     ob_start(); ?>
-    <div id="map" style="height: 400px;"></div>
-
+    <div id="map-container" style="position: relative;">
+        <div id="map" style="height: 400px;"></div>
+    </div>
     <form id="leaflet-form" style="display: none; margin-top: 1em;">
         <input type="text" name="name" placeholder="Dein Name" required><br>
         <textarea name="message" placeholder="Deine Nachricht" required></textarea><br>
@@ -46,10 +47,65 @@ function leaflet_form_shortcode() {
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var map = L.map('map').setView([51.505, -0.09], 13);
+        // Custom "Locate Me" Control
+        L.Control.LocateControl = L.Control.extend({
+            onAdd: function (map) {
+                var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+                container.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
+                container.style.backgroundColor = 'white';
+                container.style.width = '34px';
+                container.style.height = '34px';
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.style.justifyContent = 'center';
+                container.style.cursor = 'pointer';
+
+                container.onclick = function () {
+                    map.locate({ setView: true, maxZoom: 15 });
+                };
+
+                // Mausinteraktion auf der Karte nicht blockieren
+                L.DomEvent.disableClickPropagation(container);
+
+                return container;
+            },
+
+            onRemove: function (map) {
+                // nichts nötig
+            }
+        });
+
+        var map = L.map('map',
+                {scrollWheelZoom: true, dragging: true, fullscreen: true}).setView([51.25426,7.14987], 13);
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap'
+            maxZoom: 19,
+            attribution: '&copy; <a href=\"http:\/\/www.openstreetmap.org\/copyright\">OpenStreetMap contributors<\/a>'
         }).addTo(map);
+
+        map.addControl(new L.Control.LocateControl({ position: 'topright' }));
+
+        map.on('locationfound', function (e) {
+            const marker = L.marker(e.latlng).addTo(map)
+                .bindPopup("Du bist hier!").openPopup();
+
+            L.circle(e.latlng, {
+                radius: e.accuracy,
+                color: '#136aec',
+                fillColor: '#136aec',
+                fillOpacity: 0.2
+            }).addTo(map);
+
+            // Remove marker of current location after 2 seconds
+            setTimeout(() => {
+                map.removeLayer(marker);
+            }, 2000);
+        });
+
+        map.on('locationerror', function (e) {
+            alert("Standort konnte nicht gefunden werden: " + e.message);
+        });
 
         var marker;
 
@@ -105,7 +161,8 @@ function handle_leaflet_form() {
     // Beispiel: E-Mail senden
     $to = get_option('admin_email');
     $subject = "Neue Karteinsendung von $name";
-    $body = "Name: $name\nNachricht: $message\nPosition: $lat, $lng";
+    $link = "https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=17/$lat/$lng";
+    $body = "Name: $name\nNachricht: $message\nPosition: $lat, $lng\nKarte: $link";
     $headers = ['Content-Type: text/plain; charset=UTF-8'];
 
     wp_mail($to, $subject, $body, $headers);
