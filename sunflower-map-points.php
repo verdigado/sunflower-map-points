@@ -18,7 +18,7 @@
  * Requires Plugins:
  * Requires Themes: sunflower
  *
- * @since 1.0.0
+ * @since 1.1.0
  */
 
 if (!defined('ABSPATH')) {
