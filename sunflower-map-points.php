@@ -25,25 +25,51 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function load_leaflet_assets() {
-    wp_enqueue_style('leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
-    wp_enqueue_script('leaflet-js', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], null, true);
+require_once 'inc/custom-pois.php';
+
+function sunflower_map_points_enqueue_styles() {
+    global $post;
+
+    if (isset($post) && has_shortcode($post->post_content, 'leaflet_form_map')) {
+        wp_enqueue_script(
+            'sunflower-leaflet',
+            get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.js',
+            null,
+            '1.1.0',
+            true
+        );
+
+        wp_enqueue_style(
+            'sunflower-leaflet',
+            get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.css',
+            array(),
+            '1.1.0'
+        );
+
+        wp_enqueue_style(
+            'sunflower-map-points-style',
+            plugin_dir_url(__FILE__) . 'assets/css/sunflower-map-points.css'
+        );
+    }
 }
-add_action('wp_enqueue_scripts', 'load_leaflet_assets');
+add_action('wp_enqueue_scripts', 'sunflower_map_points_enqueue_styles');
+
 
 function leaflet_form_shortcode() {
     ob_start(); ?>
     <div id="map-container" style="position: relative;">
-        <div id="map" style="height: 400px;"></div>
+        <div id="map" style="height: 600px;"></div>
     </div>
     <form id="leaflet-form" style="display: none; margin-top: 1em;">
-        <input type="text" name="name" placeholder="Dein Name" required><br>
-        <textarea name="message" placeholder="Deine Nachricht" required></textarea><br>
+        <input type="text" name="name" maxlength="50" placeholder="Dein Name" required><br>
+        <textarea name="message" cols="80" rows="10" placeholder="Dein Hinweis" required></textarea><br>
         <input type="hidden" name="lat">
         <input type="hidden" name="lng">
         <input type="hidden" name="action" value="send_leaflet_form">
         <button type="submit">Absenden</button>
     </form>
+
+    <div id="form-message" class="alert d-none" role="alert"></div>
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -109,39 +135,94 @@ function leaflet_form_shortcode() {
 
         var marker;
 
-        map.on('click', function(e) {
+        map.on('click', function (e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+
+            // Entferne vorherigen Marker (optional)
             if (marker) {
-                marker.setLatLng(e.latlng);
-            } else {
-                marker = L.marker(e.latlng).addTo(map);
+                map.removeLayer(marker);
             }
-            document.getElementById('leaflet-form').style.display = 'block';
-            document.querySelector('input[name="lat"]').value = e.latlng.lat;
-            document.querySelector('input[name="lng"]').value = e.latlng.lng;
+
+            // Neuer Marker
+            marker = L.marker([lat, lng]).addTo(map);
+
+            // Formular-HTML als Popup-Inhalt
+            const formHtml = `
+                <form id="leaflet-form">
+                <input type="hidden" name="action" value="send_leaflet_form">
+                <input type="hidden" name="lat" value="${lat}">
+                <input type="hidden" name="lng" value="${lng}">
+                <div class="mb-2">
+                    <label>Name:<br><input type="text" name="name" required></label>
+                </div>
+                <div class="mb-2">
+                    <label>Nachricht:<br><textarea name="message" rows="10" required></textarea></label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Senden</button>
+                </form>
+                <div id="form-message" class="alert d-none mt-2" role="alert"></div>
+            `;
+
+            // Popup anzeigen
+            marker.bindPopup(formHtml, {
+  autoPan: true,
+  autoPanPadding: [40, 40], // sorgt für ausreichend Abstand von Rändern
+  offset: [0, -10] // zentriert Popup besser über Marker
+}).openPopup();
         });
 
-        document.getElementById('leaflet-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const form = this;
-            const formData = new FormData(form);
 
-            fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
-                method: 'POST',
-                body: formData
-            }).then(response => response.json())
-              .then(data => {
-                  alert(data.message);
-                  form.reset();
-                  form.style.display = 'none';
-                  if (marker) {
-                      map.removeLayer(marker);
-                      marker = null;
-                  }
-              }).catch(error => {
-                  alert('Fehler beim Absenden!');
-                  console.error(error);
-              });
-        });
+        map.on('popupopen', function () {
+            const form = document.getElementById('leaflet-form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+
+                fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const popupContent = `
+                            <div class="alert alert-success fade-message mb-0" id="popup-message">
+                            ${data.message}
+                            </div>
+                        `;
+
+                        // Popup-Inhalt ersetzen (statt nur Nachricht unten drunter)
+                        marker.getPopup().setContent(popupContent);
+
+                        setTimeout(() => {
+                            map.closePopup();
+                            if (marker) {
+                            map.removeLayer(marker);
+                            marker = null;
+                            }
+                        }, 8000);
+
+                        form.reset();
+                    })
+                    .catch(error => {
+                        const msgBox = document.getElementById('form-message');
+                        msgBox.textContent = 'Fehler beim Absenden!';
+                        msgBox.className = 'alert alert-danger mt-2';
+                        msgBox.classList.remove('d-none');
+                        });
+
+                        setTimeout(() => {
+                            map.closePopup();
+                            if (marker) {
+                            map.removeLayer(marker);
+                            marker = null;
+                            }
+                        }, 8000);
+                    });
+                }
+            });
+
     });
     </script>
     <?php
@@ -158,17 +239,38 @@ function handle_leaflet_form() {
     $lat = sanitize_text_field($_POST['lat'] ?? '');
     $lng = sanitize_text_field($_POST['lng'] ?? '');
 
+    // Beitrag erstellen
+    $post_id = wp_insert_post([
+        'post_type' => 'custompoi',
+        'post_title' => wp_strip_all_tags($name),
+        'post_status' => 'publish', // oder 'pending' für Moderation
+    ]);
+
     // Beispiel: E-Mail senden
     $to = get_option('admin_email');
-    $subject = "Neue Karteinsendung von $name";
+    $subject = "Neue Kartenhinweis von $name";
     $link = "https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=17/$lat/$lng";
     $body = "Name: $name\nNachricht: $message\nPosition: $lat, $lng\nKarte: $link";
     $headers = ['Content-Type: text/plain; charset=UTF-8'];
 
     wp_mail($to, $subject, $body, $headers);
 
-    wp_send_json([
-        'success' => true,
-        'message' => 'Danke! Deine Nachricht wurde gesendet.'
-    ]);
+    if ($post_id && !is_wp_error($post_id)) {
+        // Metadaten speichern
+        update_post_meta($post_id, 'message', $message);
+        update_post_meta($post_id, 'lat', $lat);
+        update_post_meta($post_id, 'lng', $lng);
+        update_post_meta($post_id, 'link', $link);
+
+        wp_send_json([
+            'success' => true,
+            'message' => 'Danke! Deine Hinweis wurde gespeichert.'
+        ]);
+    } else {
+        wp_send_json([
+            'success' => false,
+            'message' => 'Fehler beim Speichern.'
+        ]);
+    }
+
 }

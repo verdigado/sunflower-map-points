@@ -1,0 +1,33 @@
+.leaflet-popup-content label,
+.leaflet-popup-content input[name='name']
+{
+    width: 100%;
+}
+
+.form-message {
+  margin-top: 1em;
+  padding: 1em;
+  border-radius: 5px;
+  font-weight: bold;
+  display: none;
+}
+
+.fade-message {
+  opacity: 1;
+  transition: opacity 2s ease;
+}
+
+.fade-message.hidden {
+  opacity: 0;
+}
+
+.leaflet-popup-content {
+  width: 260px;
+}
+
+.leaflet-popup-form {
+  font-size: 0.875rem; /* optional kompaktere Darstellung */
+}
+.leaflet-popup  {
+    z-index: 800;
+}
