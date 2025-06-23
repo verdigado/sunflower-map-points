@@ -84,7 +84,7 @@
 			// show form as popup
 			const formHtml = `
 				<form id="leaflet-form">
-				"${sunflower_map_points._nonce}"
+				${sunflower_map_points._nonce}
 				<input type="hidden" name="action" value="send_leaflet_form">
 				<input type="hidden" name="lat" value="${lat}">
 				<input type="hidden" name="lng" value="${lng}">
