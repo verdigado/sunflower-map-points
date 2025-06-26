@@ -1,14 +1,31 @@
 {
   "apiVersion": 2,
-  "name": "sunflower-map-points/leaflet-map",
+  "name": "sunflower-map-points/map",
   "title": "Leaflet Formular Map",
   "description": "Eine interaktive Karte mit Formular.",
   "category": "widgets",
   "icon": "location-alt",
+  "attributes": {
+    "lat": {
+      "type": "number",
+      "default": 51.25426
+    },
+    "lng": {
+      "type": "number",
+      "default": 7.14987
+    },
+    "zoom": {
+      "type": "number",
+      "default": 13
+    }
+  },
   "supports": {
     "html": false
   },
   "editorScript": "file:./index.js",
+  "script": [
+    "file:./map-frontend.js"
+  ],
   "style": "file:./style-index.css",
   "render": "file:./render.php"
 }
