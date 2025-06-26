@@ -41,7 +41,7 @@ require_once 'inc/custom-pois.php';
 function sunflower_map_points_enqueue_styles() {
 	global $post;
 
-	if ( isset( $post ) && has_block( 'sunflower-map-points/leaflet-map', $post ) ) {
+	if ( isset( $post ) && has_block( 'sunflower-map-points/map', $post ) ) {
 		wp_enqueue_script(
 			'sunflower-leaflet',
 			get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.js',
@@ -56,9 +56,23 @@ function sunflower_map_points_enqueue_styles() {
 			array(),
 			SUNFLOWER_MAP_POINTS_VERSION
 		);
+
+		wp_localize_script(
+			'sunflower-map-points-map-script',
+			'sunflowerMapPoints',
+			array(
+				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+				'_nonce'      => wp_nonce_field( 'sunflower_map_points_feedback', '_wpnonce' ),
+				'maps_marker' => plugin_dir_url( __FILE__ ) . '/assets/img/marker.png',
+				'texts'       => array(
+					'readmore' => __( 'Continue reading', 'sunflower' ),
+				),
+			)
+		);
 	}
 }
 add_action( 'wp_enqueue_scripts', 'sunflower_map_points_enqueue_styles' );
+add_action( 'admin_enqueue_scripts', 'sunflower_map_points_enqueue_styles' );
 
 add_action( 'wp_ajax_send_leaflet_form', 'sunflower_map_points_handle_leaflet_form' );
 add_action( 'wp_ajax_nopriv_send_leaflet_form', 'sunflower_map_points_handle_leaflet_form' );
@@ -117,35 +131,6 @@ function sunflower_map_points_handle_leaflet_form() {
 		);
 	}
 }
-
-/**
- * Enqueue scripts and styles.
- */
-function sunflower_map_points_scripts() {
-
-	wp_enqueue_script(
-		'frontend',
-		plugin_dir_url( __FILE__ ) . '/assets/js/frontend.js',
-		array(),
-		SUNFLOWER_MAP_POINTS_VERSION,
-		true
-	);
-
-	wp_localize_script(
-		'frontend',
-		'sunflower_map_points',
-		array(
-			'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-			'_nonce'      => wp_nonce_field( 'sunflower_map_points_feedback', '_wpnonce' ),
-			'maps_marker' => plugin_dir_url( __FILE__ ) . '/assets/img/marker.png',
-			'texts'       => array(
-				'readmore' => __( 'Continue reading', 'sunflower' ),
-			),
-		)
-	);
-}
-add_action( 'wp_enqueue_scripts', 'sunflower_map_points_scripts' );
-
 
 /**
  * Registers the block using the metadata loaded from the `block.json` file.

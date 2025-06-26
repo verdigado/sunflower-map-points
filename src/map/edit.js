@@ -4,19 +4,14 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+
 import {
-	useBlockProps
-} from '@wordpress/block-editor';
-
-/**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * Those files can contain any CSS code that gets applied to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
- */
-// import './editor.scss';
-
-const EMPTY_ARRAY = [];
+	Disabled,
+	RangeControl,
+	PanelBody,
+	TextControl,
+} from '@wordpress/components';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -30,14 +25,58 @@ const EMPTY_ARRAY = [];
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
+	const { lat, lng, zoom } = attributes;
 	const blockProps = useBlockProps( {
 		className: 'row',
 	} );
 
-
-    return (
-        <div { ...blockProps }>
-            <p>Platzhalter</p>
-        </div>
-    );
+	return (
+		<div { ...blockProps }>
+			{
+				<>
+					<Disabled>
+						<div
+							className="map-container"
+							data-lat={ lat }
+							data-lng={ lng }
+							data-zoom={ zoom }
+						>
+							<div id="map" style={ { height: '600px' } }></div>
+						</div>
+					</Disabled>
+				</>
+			}
+			{
+				<>
+					<InspectorControls>
+						<PanelBody title="Karteneinstellungen">
+							<TextControl
+								label="Latitude"
+								value={ lat }
+								onChange={ ( val ) =>
+									setAttributes( { lat: parseFloat( val ) } )
+								}
+							/>
+							<TextControl
+								label="Longitude"
+								value={ lng }
+								onChange={ ( val ) =>
+									setAttributes( { lng: parseFloat( val ) } )
+								}
+							/>
+							<RangeControl
+								label="Zoom"
+								value={ zoom }
+								onChange={ ( val ) =>
+									setAttributes( { zoom: val } )
+								}
+								min={ 1 }
+								max={ 18 }
+							/>
+						</PanelBody>
+					</InspectorControls>
+				</>
+			}
+		</div>
+	);
 }

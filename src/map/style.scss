@@ -5,16 +5,15 @@
  * Replace them with your own styles or keep the empty file.
  */
 
-.wp-block-sunflower-map-points-leaflet-map {
+.wp-block-sunflower-map-points-map {
 
-    .leaflet-popup-content label,
-    .leaflet-popup-content input[name='name']
-    {
-        width: 100%;
-    }
+	.leaflet-popup-content label,
+	.leaflet-popup-content input[name="name"] {
+		width: 100%;
+	}
 
-    .leaflet-popup-content {
-        width: 260px;
-    }
+	.leaflet-popup-content {
+		width: 260px;
+	}
 
 }
