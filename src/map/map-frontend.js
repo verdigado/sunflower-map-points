@@ -125,10 +125,16 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				<input type="hidden" name="lat" value="${ lat }">
 				<input type="hidden" name="lng" value="${ lng }">
 				<div class="mb-2">
-					<label>Name:<br><input type="text" name="name" required></label>
+					<label>Name (*):<br><input type="text" name="name" required></label>
 				</div>
 				<div class="mb-2">
-					<label>Nachricht:<br><textarea name="message" rows="10" required></textarea></label>
+					<label>Email (*):<br><input type="email" name="email" required></label>
+				</div>
+				<div class="mb-2">
+					<label>Telefon:<br><input type="tel" name="phone"></label>
+				</div>
+				<div class="mb-2">
+					<label>Hinweis (*):<br><textarea name="message" rows="10" required></textarea></label>
 				</div>
 				<button type="submit" class="btn btn-primary btn-sm">Senden</button>
 				</form>
