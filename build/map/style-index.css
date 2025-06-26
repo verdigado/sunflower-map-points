@@ -7,11 +7,11 @@
  *
  * Replace them with your own styles or keep the empty file.
  */
-.wp-block-sunflower-map-points-map .leaflet-popup-content label,
-.wp-block-sunflower-map-points-map .leaflet-popup-content input[name=name] {
+.map-container .leaflet-popup-content label,
+.map-container .leaflet-popup-content input {
   width: 100%;
 }
-.wp-block-sunflower-map-points-map .leaflet-popup-content {
+.map-container .leaflet-popup-content {
   width: 260px;
 }
 
