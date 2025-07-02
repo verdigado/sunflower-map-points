@@ -25,7 +25,7 @@ import {
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { lat, lng, zoom } = attributes;
+	const { lat, lng, zoom, height } = attributes;
 	const blockProps = useBlockProps( {
 		className: 'row',
 	} );
@@ -41,7 +41,10 @@ export default function Edit( { attributes, setAttributes } ) {
 							data-lng={ lng }
 							data-zoom={ zoom }
 						>
-							<div id="map" style={ { height: '600px' } }></div>
+							<div
+								id="map"
+								style={ { height: `${ parseInt(height, 10) || 600 }px` } }
+							></div>
 						</div>
 					</Disabled>
 				</>
@@ -72,6 +75,13 @@ export default function Edit( { attributes, setAttributes } ) {
 								}
 								min={ 1 }
 								max={ 18 }
+							/>
+							<TextControl
+								label="Height"
+								value={ height }
+								onChange={ ( val ) =>
+									setAttributes( { height: parseInt( val ) } )
+								}
 							/>
 						</PanelBody>
 					</InspectorControls>
