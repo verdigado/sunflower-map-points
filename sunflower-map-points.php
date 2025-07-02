@@ -90,8 +90,8 @@ function sunflower_map_points_handle_leaflet_form() {
 	$message = sanitize_textarea_field( $_POST['message'] ?? '' );
 	$lat     = sanitize_text_field( $_POST['lat'] ?? '' );
 	$lng     = sanitize_text_field( $_POST['lng'] ?? '' );
-	$email     = sanitize_text_field( $_POST['email'] ?? '' );
-	$phone     = sanitize_text_field( $_POST['phone'] ?? '' );
+	$email   = sanitize_text_field( $_POST['email'] ?? '' );
+	$phone   = sanitize_text_field( $_POST['phone'] ?? '' );
 
 	// Create custom post 'custompoi'.
 	$post_id = wp_insert_post(

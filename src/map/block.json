@@ -17,6 +17,10 @@
     "zoom": {
       "type": "number",
       "default": 13
+    },
+    "height": {
+      "type": "number",
+      "default": 600
     }
   },
   "supports": {

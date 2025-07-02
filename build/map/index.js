@@ -8,7 +8,7 @@
   \****************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":2,"name":"sunflower-map-points/map","title":"Leaflet Formular Map","description":"Eine interaktive Karte mit Formular.","category":"widgets","icon":"location-alt","attributes":{"lat":{"type":"number","default":51.25426},"lng":{"type":"number","default":7.14987},"zoom":{"type":"number","default":13}},"supports":{"html":false},"editorScript":"file:./index.js","script":["file:./map-frontend.js"],"style":"file:./style-index.css","render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":2,"name":"sunflower-map-points/map","title":"Leaflet Formular Map","description":"Eine interaktive Karte mit Formular.","category":"widgets","icon":"location-alt","attributes":{"lat":{"type":"number","default":51.25426},"lng":{"type":"number","default":7.14987},"zoom":{"type":"number","default":13},"height":{"type":"number","default":600}},"supports":{"html":false},"editorScript":"file:./index.js","script":["file:./map-frontend.js"],"style":"file:./style-index.css","render":"file:./render.php"}');
 
 /***/ }),
 
@@ -56,7 +56,8 @@ function Edit({
   const {
     lat,
     lng,
-    zoom
+    zoom,
+    height
   } = attributes;
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.useBlockProps)({
     className: 'row'
@@ -73,7 +74,9 @@ function Edit({
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
             id: "map",
             style: {
-              height: '600px'
+              height: {
+                height
+              } + 'px'
             }
           })
         })
@@ -102,6 +105,12 @@ function Edit({
             }),
             min: 1,
             max: 18
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
+            label: "Height",
+            value: height,
+            onChange: val => setAttributes({
+              height: parseInt(val)
+            })
           })]
         })
       })
