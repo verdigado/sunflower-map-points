@@ -125,7 +125,7 @@ function sunflower_map_points_handle_leaflet_form() {
 		wp_send_json(
 			array(
 				'success'      => true,
-				'messageafter' => 'DANK für Deinen Hinweis! 💚 Wir prüfen Deinen Vorschlag und setzen uns demnächst mit Dir in Verbindung und schauen dann gemeinsam, was wir machen können.',
+				'messageafter' => 'DANKE für Deinen Hinweis! 💚 Wir prüfen Deinen Vorschlag und setzen uns demnächst mit Dir in Verbindung und schauen dann gemeinsam, was wir machen können.',
 			)
 		);
 	} else {
