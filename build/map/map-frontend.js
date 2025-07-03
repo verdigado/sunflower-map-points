@@ -109,27 +109,26 @@ document.addEventListener('DOMContentLoaded', () => {
 				<input type="hidden" name="lat" value="${lat}">
 				<input type="hidden" name="lng" value="${lng}">
 				<div class="mb-2">
-					<label>Name (*):<br><input type="text" name="name" required></label>
+					<label class="form-label">Name (*):<br><input type="text" name="name" required></label>
 				</div>
 				<div class="mb-2">
-					<label>Email (*):<br><input type="email" name="email" required></label>
+					<label class="form-label">Email (*):<br><input type="email" name="email" required></label>
 				</div>
 				<div class="mb-2">
-					<label>Telefon:<br><input type="tel" name="phone"></label>
+					<label class="form-label">Telefon:<br><input type="tel" name="phone"></label>
 				</div>
 				<div class="mb-2">
-					<label>Thema (*):<br>
-						<select id="topic" name="topic">
-							<option value="Sonstiges">Sonstiges</option>
-							<option value="Baum">Baum</option>
-							<option value="Bank">Bank</option>
-							<option value="Abfalleimer">Abfalleimer</option>
-							<option value="Trinkbrunnen">Trinkbrunnen</option>
-						</select>
-					</label>
+					<label for="topic" class="form-label">Thema (*)</label>
+					<select id="topic" name="topic" class="form-select">
+						<option value="Sonstiges">Sonstiges</option>
+						<option value="Baum">Baum</option>
+						<option value="Bank">Bank</option>
+						<option value="Abfalleimer">Abfalleimer</option>
+						<option value="Trinkbrunnen">Trinkbrunnen</option>
+					</select>
 				</div>
 				<div class="mb-2">
-					<label>Hinweis (*):<br><textarea name="message" rows="10" required></textarea></label>
+					<label class="form-label">Hinweis (*):<br><textarea name="message" rows="10" required></textarea></label>
 				</div>
 				<button type="submit" class="btn btn-primary btn-sm">Senden</button>
 				</form>
