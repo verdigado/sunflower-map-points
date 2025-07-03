@@ -107,7 +107,7 @@ function sunflower_map_points_handle_leaflet_form() {
 	$to      = get_option( 'admin_email' );
 	$subject = "Neue Kartenhinweis von \"$name\"";
 	$link    = "https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=17/$lat/$lng";
-	$body    = "Name: $name\nNachricht: $message\nPosition: $lat, $lng\nKarte: $link\nE-Mail: $email\nTelefon: $phone\nThema: $topic";
+	$body    = "Name: $name\nHinweis: $message\nPosition: $lat, $lng\nKarte: $link\nE-Mail: $email\nTelefon: $phone\nThema: $topic";
 	$headers = array( 'Content-Type: text/plain; charset=UTF-8' );
 
 	wp_mail( $to, $subject, $body, $headers );

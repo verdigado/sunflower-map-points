@@ -43,7 +43,11 @@ export default function Edit( { attributes, setAttributes } ) {
 						>
 							<div
 								id="map"
-								style={ { height: `${ parseInt(height, 10) || 400 }px` } }
+								style={ {
+									height: `${
+										parseInt( height, 10 ) || 400
+									}px`,
+								} }
 							></div>
 						</div>
 					</Disabled>

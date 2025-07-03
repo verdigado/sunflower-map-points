@@ -134,18 +134,19 @@ document.addEventListener( 'DOMContentLoaded', () => {
 					<label>Telefon:<br><input type="tel" name="phone"></label>
 				</div>
 				<div class="mb-2">
-					<label>Hinweis (*):<br><select id="topic" name="topic">
-								<option value="Sonstiges">Sonstiges</option>
-								<option value="Baum">Baum</option>
-								<option value="Bank">Bank</option>
-								<option value="Abfalleimer">Abfalleimer</option>
-								<option value="Trinkbrunnen">Trinkbrunnen</option>
-								</select>
+					<label>Thema (*):<br>
+						<select id="topic" name="topic">
+							<option value="Sonstiges">Sonstiges</option>
+							<option value="Baum">Baum</option>
+							<option value="Bank">Bank</option>
+							<option value="Abfalleimer">Abfalleimer</option>
+							<option value="Trinkbrunnen">Trinkbrunnen</option>
+						</select>
 					</label>
 				</div>
 				<div class="mb-2">
-                                        <label>Thema:<br><textarea name="message" rows="10" required></textarea></label>
-                                </div>
+					<label>Hinweis (*):<br><textarea name="message" rows="10" required></textarea></label>
+				</div>
 				<button type="submit" class="btn btn-primary btn-sm">Senden</button>
 				</form>
 				<div id="form-message" class="alert d-none mt-2" role="alert"></div>
