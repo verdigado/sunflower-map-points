@@ -92,6 +92,7 @@ function sunflower_map_points_handle_leaflet_form() {
 	$lng     = sanitize_text_field( $_POST['lng'] ?? '' );
 	$email   = sanitize_text_field( $_POST['email'] ?? '' );
 	$phone   = sanitize_text_field( $_POST['phone'] ?? '' );
+	$topic   = sanitize_text_field( $_POST['topic'] ?? '' );
 
 	// Create custom post 'custompoi'.
 	$post_id = wp_insert_post(
@@ -106,7 +107,7 @@ function sunflower_map_points_handle_leaflet_form() {
 	$to      = get_option( 'admin_email' );
 	$subject = "Neue Kartenhinweis von \"$name\"";
 	$link    = "https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=17/$lat/$lng";
-	$body    = "Name: $name\nNachricht: $message\nPosition: $lat, $lng\nKarte: $link\nE-Mail: $email\nTelefon: $phone";
+	$body    = "Name: $name\nHinweis: $message\nPosition: $lat, $lng\nKarte: $link\nE-Mail: $email\nTelefon: $phone\nThema: $topic";
 	$headers = array( 'Content-Type: text/plain; charset=UTF-8' );
 
 	wp_mail( $to, $subject, $body, $headers );
@@ -119,11 +120,12 @@ function sunflower_map_points_handle_leaflet_form() {
 		update_post_meta( $post_id, 'link', $link );
 		update_post_meta( $post_id, 'email', $email );
 		update_post_meta( $post_id, 'phone', $phone );
+		update_post_meta( $post_id, 'topic', $topic );
 
 		wp_send_json(
 			array(
 				'success'      => true,
-				'messageafter' => 'Danke! Deine Hinweis wurde gespeichert.',
+				'messageafter' => 'DANKE für Deinen Hinweis! 💚 Wir prüfen Deinen Vorschlag und setzen uns demnächst mit Dir in Verbindung und schauen dann gemeinsam, was wir machen können.',
 			)
 		);
 	} else {
