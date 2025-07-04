@@ -1,4 +1,11 @@
 /**
+ * Retrieves the translation of text.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * React hook that is used to mark the block wrapper element.
  * It provides all the necessary props like the class name.
  *
@@ -11,7 +18,9 @@ import {
 	RangeControl,
 	PanelBody,
 	TextControl,
+	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -25,31 +34,30 @@ import {
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { lat, lng, zoom, height } = attributes;
+	const { lat, lng, zoom, height, mailTo } = attributes;
 	const blockProps = useBlockProps( {
 		className: 'row',
 	} );
+
+	const onChangeMailTo = ( input ) => {
+		setAttributes( { mailTo: input === undefined ? '' : input } );
+	};
 
 	return (
 		<div { ...blockProps }>
 			{
 				<>
 					<Disabled>
-						<div
-							className="map-container"
-							data-lat={ lat }
-							data-lng={ lng }
-							data-zoom={ zoom }
-						>
-							<div
-								id="map"
-								style={ {
-									height: `${
-										parseInt( height, 10 ) || 400
-									}px`,
-								} }
-							></div>
-						</div>
+						<ServerSideRender
+							block={ 'sunflower-map-points/map' }
+							attributes={ {
+								lat,
+								lng,
+								zoom,
+								height,
+								mailTo,
+							} }
+						/>
 					</Disabled>
 				</>
 			}
@@ -80,12 +88,34 @@ export default function Edit( { attributes, setAttributes } ) {
 								min={ 1 }
 								max={ 18 }
 							/>
-							<TextControl
+							<NumberControl
 								label="Height"
 								value={ height }
-								onChange={ ( val ) =>
-									setAttributes( { height: parseInt( val ) } )
-								}
+								onChange={ ( value ) => {
+									const parsed = parseInt( value );
+									if ( parsed >= 100 && parsed <= 1000 ) {
+										setAttributes( { height: parsed } );
+									}
+								} }
+								min={ 100 }
+								max={ 1000 }
+							/>
+							<TextControl
+								label={ __(
+									'Mail To',
+									'sunflower-map-points-map'
+								) }
+								help={ __(
+									'Mail form to this address instead of default receiver.',
+									'sunflower-map-points-map'
+								) }
+								value={ mailTo }
+								placeholder={ __(
+									'default receiver',
+									'sunflower-map-points-map'
+								) }
+								type="email"
+								onChange={ onChangeMailTo }
 							/>
 						</PanelBody>
 					</InspectorControls>

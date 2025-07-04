@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const initLat = parseFloat(el.dataset.lat);
       const initLng = parseFloat(el.dataset.lng);
       const initZoom = parseInt(el.dataset.zoom, 10);
+      const mailTo = el.dataset.mailTo;
       const map = L.map(mapEl, {
         scrollWheelZoom: true,
         dragging: true,
@@ -108,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				<input type="hidden" name="action" value="send_leaflet_form">
 				<input type="hidden" name="lat" value="${lat}">
 				<input type="hidden" name="lng" value="${lng}">
+				<input type="hidden" name="mailTo" value="${mailTo}">
 				<div class="mb-2">
 					<label class="form-label">Name (*):<br><input type="text" name="name" required></label>
 				</div>

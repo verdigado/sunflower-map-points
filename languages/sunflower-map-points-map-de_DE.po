@@ -1,0 +1,53 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sunflower-map-"
+"points\n"
+"POT-Creation-Date: 2025-07-04T10:52:33+02:00\n"
+"PO-Revision-Date: 2025-07-04 13:41+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+"X-Domain: sunflower-map-points-map\n"
+
+#. Plugin Name of the plugin
+#: sunflower-map-points.php
+msgid "Sunflower Map Points"
+msgstr ""
+
+#. Description of the plugin
+#: sunflower-map-points.php
+msgid "Simple plugin allowing map points and suggestions."
+msgstr ""
+
+#. Author of the plugin
+#: sunflower-map-points.php
+msgid "Alexander Bigga"
+msgstr ""
+
+#: build/map/render.php:24 build/map/index.js:129 build/map/index.js:98
+msgid "Mail To"
+msgstr "Email Empfänger"
+
+#: build/map/index.js:130 build/map/index.js:102
+msgid "Mail form to this address instead of default receiver."
+msgstr ""
+"Sende Formular an die angegebene Adresse statt dem Standard-Empfänger."
+
+#: build/map/index.js:132 build/map/index.js:107
+msgid "default receiver"
+msgstr "Standard Empfänger"
+
+#: build/map/block.json
+msgctxt "block title"
+msgid "Leaflet Formular Map"
+msgstr "Sunflower Leaflet Karte"
+
+#: build/map/block.json
+msgctxt "block description"
+msgid "Eine interaktive Karte mit Formular."
+msgstr ""
