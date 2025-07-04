@@ -3,12 +3,12 @@
  * Main file of the sunflower map points plugin.
  *
  * @package Sunflower Map Points
- * @version 1.2.1
+ * @version 1.2.2
  *
  * @wordpress-plugin
  * Plugin Name: Sunflower Map Points
  * Description: Simple plugin allowing map points and suggestions.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Alexander Bigga
  * License: GPL v2 oder später
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
