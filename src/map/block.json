@@ -1,6 +1,8 @@
 {
-  "apiVersion": 2,
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
   "name": "sunflower-map-points/map",
+  "textdomain": "sunflower-map-points-map",
   "title": "Leaflet Formular Map",
   "description": "Eine interaktive Karte mit Formular.",
   "category": "widgets",
@@ -21,13 +23,17 @@
     "height": {
       "type": "number",
       "default": 600
-    }
+    },
+    "mailTo": {
+      "type": "string",
+			"default": ""
+		}
   },
   "supports": {
     "html": false
   },
-  "editorScript": "file:./index.js",
-  "script": ["file:./map-frontend.js"],
-	"style": "file:./style-index.css",
+  "editorScript": ["file:./index.js"],
+  "script": ["file:./map-frontend.js", "sunflower-leaflet"],
+  "style": ["file:./style-index.css", "sunflower-leaflet"],
   "render": "file:./render.php"
 }

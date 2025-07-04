@@ -42,20 +42,6 @@ function sunflower_map_points_enqueue_styles() {
 	global $post;
 
 	if ( isset( $post ) && has_block( 'sunflower-map-points/map', $post ) ) {
-		wp_enqueue_script(
-			'sunflower-leaflet',
-			get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.js',
-			array(),
-			SUNFLOWER_MAP_POINTS_VERSION,
-			true
-		);
-
-		wp_enqueue_style(
-			'sunflower-leaflet',
-			get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.css',
-			array(),
-			SUNFLOWER_MAP_POINTS_VERSION
-		);
 
 		wp_localize_script(
 			'sunflower-map-points-map-script',
@@ -72,7 +58,6 @@ function sunflower_map_points_enqueue_styles() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'sunflower_map_points_enqueue_styles' );
-add_action( 'admin_enqueue_scripts', 'sunflower_map_points_enqueue_styles' );
 
 add_action( 'wp_ajax_send_leaflet_form', 'sunflower_map_points_handle_leaflet_form' );
 add_action( 'wp_ajax_nopriv_send_leaflet_form', 'sunflower_map_points_handle_leaflet_form' );
@@ -94,6 +79,11 @@ function sunflower_map_points_handle_leaflet_form() {
 	$phone   = sanitize_text_field( $_POST['phone'] ?? '' );
 	$topic   = sanitize_text_field( $_POST['topic'] ?? '' );
 
+	$mail_to = sanitize_text_field( $_POST['mailTo'] );
+	if ( $mail_to ) {
+		$to = sanitize_email( base64_decode( strrev( (string) $mail_to ) ) ); // phpcs:ignore
+	}
+
 	// Create custom post 'custompoi'.
 	$post_id = wp_insert_post(
 		array(
@@ -104,7 +94,10 @@ function sunflower_map_points_handle_leaflet_form() {
 	);
 
 	// Send E-Mail to admin.
-	$to      = get_option( 'admin_email' );
+	if ( empty( $to ) ) {
+		$to = get_option( 'admin_email' );
+	}
+
 	$subject = "Neue Kartenhinweis von \"$name\"";
 	$link    = "https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=17/$lat/$lng";
 	$body    = "Name: $name\nHinweis: $message\nPosition: $lat, $lng\nKarte: $link\nE-Mail: $email\nTelefon: $phone\nThema: $topic";
@@ -138,16 +131,41 @@ function sunflower_map_points_handle_leaflet_form() {
 	}
 }
 
-/**
- * Registers the block using the metadata loaded from the `block.json` file.
- * Behind the scenes, it registers also all assets so they can be enqueued
- * through the block editor in the corresponding context.
- *
- * @see https://developer.wordpress.org/reference/functions/register_block_type/
- */
-function sunflower_map_points_blocks_init() {
+add_action( 'init', 'sunflower_map_points_blocks_init' );
 
+function sunflower_map_points_blocks_init() {
+	// register leaflet
+	wp_register_script(
+		'sunflower-leaflet',
+		get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.js',
+		array(),
+		SUNFLOWER_MAP_POINTS_VERSION,
+		true
+	);
+
+	wp_register_style(
+		'sunflower-leaflet',
+		get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.css',
+		array(),
+		SUNFLOWER_MAP_POINTS_VERSION
+	);
+
+	// Register blocks
 	register_block_type( __DIR__ . '/build/map' );
+
+	// load translations
+	wp_set_script_translations(
+		'sunflower-map-points-map-editor-script',
+		'sunflower-map-points-map',
+		plugin_dir_path( __FILE__ ) . 'languages'
+	);
 }
 
-add_action( 'init', 'sunflower_map_points_blocks_init' );
+/**
+ * Add the block language files.
+ */
+function sunflower_map_points_blocks_load_textdomain() {
+	load_plugin_textdomain( 'sunflower-map-points-map', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+
+add_action( 'after_setup_theme', 'sunflower_map_points_blocks_load_textdomain' );
