@@ -48,7 +48,6 @@ function sunflower_map_points_enqueue_styles() {
 			'sunflowerMapPoints',
 			array(
 				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-				'_nonce'      => wp_nonce_field( 'sunflower_map_points_feedback', '_wpnonce' ),
 				'maps_marker' => plugin_dir_url( __FILE__ ) . '/assets/img/marker.png',
 				'texts'       => array(
 					'readmore' => __( 'Continue reading', 'sunflower' ),
@@ -67,9 +66,7 @@ add_action( 'wp_ajax_nopriv_send_leaflet_form', 'sunflower_map_points_handle_lea
  */
 function sunflower_map_points_handle_leaflet_form() {
 	// Do not send, if nonce is invalid.
-	if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'sunflower_map_points_feedback' ) ) {
-		return;
-	}
+	check_ajax_referer( 'sunflower_map_points_feedback' );
 
 	$name    = sanitize_text_field( $_POST['name'] ?? '' );
 	$message = sanitize_textarea_field( $_POST['message'] ?? '' );
@@ -133,8 +130,11 @@ function sunflower_map_points_handle_leaflet_form() {
 
 add_action( 'init', 'sunflower_map_points_blocks_init' );
 
+/**
+ * Register map block and all required assets.
+ */
 function sunflower_map_points_blocks_init() {
-	// register leaflet
+	// Register leaflet library.
 	wp_register_script(
 		'sunflower-leaflet',
 		get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.js',
@@ -143,6 +143,7 @@ function sunflower_map_points_blocks_init() {
 		true
 	);
 
+	// Register leaflet styles.
 	wp_register_style(
 		'sunflower-leaflet',
 		get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.css',
@@ -150,10 +151,10 @@ function sunflower_map_points_blocks_init() {
 		SUNFLOWER_MAP_POINTS_VERSION
 	);
 
-	// Register blocks
+	// Register map block.
 	register_block_type( __DIR__ . '/build/map' );
 
-	// load translations
+	// Load translation file.
 	wp_set_script_translations(
 		'sunflower-map-points-map-editor-script',
 		'sunflower-map-points-map',
