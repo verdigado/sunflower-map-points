@@ -5,6 +5,7 @@
 /* global L */
 /* global MutationObserver */
 /* global sunflowerMapPoints */
+/* global bootstrap */
 document.addEventListener('DOMContentLoaded', () => {
   const observer = new MutationObserver(() => {
     document.querySelectorAll('.map-container').forEach(el => {
@@ -23,12 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const initLat = parseFloat(el.dataset.lat);
       const initLng = parseFloat(el.dataset.lng);
       const initZoom = parseInt(el.dataset.zoom, 10);
-      const mailTo = el.dataset.mailTo;
       const map = L.map(mapEl, {
         scrollWheelZoom: true,
         dragging: true,
         fullscreenControl: true
       }).setView([initLat, initLng], initZoom);
+      mapEl._leafletMap = map;
 
       // Custom "Locate Me" Control
       L.Control.LocateControl = L.Control.extend({
@@ -79,17 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // eslint-disable-next-line no-alert, no-undef
         alert('Standort konnte nicht gefunden werden: ' + e.message);
       });
-      let marker;
+      let lastLat = null;
+      let lastLng = null;
       map.on('click', function (e) {
-        const lat = e.latlng.lat.toFixed(6);
-        const lng = e.latlng.lng.toFixed(6);
+        lastLat = e.latlng.lat.toFixed(6);
+        lastLng = e.latlng.lng.toFixed(6);
 
-        // Entferne vorherigen Marker (optional)
-        if (marker) {
-          map.removeLayer(marker);
-        }
-
-        // Create custom icon
+        // Marker-Icon
         const customIcon = L.icon({
           iconUrl: sunflowerMapPoints.maps_marker,
           iconSize: [25, 41],
@@ -97,96 +94,128 @@ document.addEventListener('DOMContentLoaded', () => {
           popupAnchor: [0, -25]
         });
 
-        // Create marker
-        marker = L.marker([lat, lng], {
+        // Alten Marker entfernen
+        if (map._marker) {
+          map.removeLayer(map._marker);
+        }
+
+        // Neuen Marker setzen
+        map._marker = L.marker([lastLat, lastLng], {
           icon: customIcon
         }).addTo(map);
 
-        // show form as popup
-        const formHtml = `
-				<form id="leaflet-form">
-				${sunflowerMapPoints._nonce}
-				<input type="hidden" name="action" value="send_leaflet_form">
-				<input type="hidden" name="lat" value="${lat}">
-				<input type="hidden" name="lng" value="${lng}">
-				<input type="hidden" name="mailTo" value="${mailTo}">
-				<div class="mb-2">
-					<label class="form-label">Name (*):<br><input type="text" name="name" required></label>
-				</div>
-				<div class="mb-2">
-					<label class="form-label">Email (*):<br><input type="email" name="email" required></label>
-				</div>
-				<div class="mb-2">
-					<label class="form-label">Telefon:<br><input type="tel" name="phone"></label>
-				</div>
-				<div class="mb-2">
-					<label for="topic" class="form-label">Thema (*)</label>
-					<select id="topic" name="topic" class="form-select">
-						<option value="Sonstiges">Sonstiges</option>
-						<option value="Baum">Baum</option>
-						<option value="Bank">Bank</option>
-						<option value="Abfalleimer">Abfalleimer</option>
-						<option value="Trinkbrunnen">Trinkbrunnen</option>
-					</select>
-				</div>
-				<div class="mb-2">
-					<label class="form-label">Hinweis (*):<br><textarea name="message" rows="10" required></textarea></label>
-				</div>
-				<button type="submit" class="btn btn-primary btn-sm">Senden</button>
-				</form>
-				<div id="form-message" class="alert d-none mt-2" role="alert"></div>
-			`;
+        // Formular-Werte setzen
+        document.querySelector('#form-lat').value = lastLat;
+        document.querySelector('#form-lng').value = lastLng;
 
-        // Popup anzeigen
-        marker.bindPopup(formHtml, {
-          autoPan: true,
-          autoPanPadding: [40, 40],
-          // sorgt für ausreichend Abstand von Rändern
-          offset: [0, -10] // zentriert Popup besser über Marker
-        }).openPopup();
+        // Modal anzeigen
+        const modal = new bootstrap.Modal(document.getElementById('leafletModal'));
+        modal.show();
       });
-      map.on('popupopen', function () {
-        const form = document.getElementById('leaflet-form');
-        if (form) {
-          form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(form);
-            fetch(sunflowerMapPoints.ajaxurl, {
-              method: 'POST',
-              body: formData
-            }).then(response => response.json()).then(data => {
-              const popupContent = `
-							<div class="alert alert-success fade-message mb-0" id="popup-message">
-							${data.messageafter}
-							</div>
-						`;
+    });
+    document.getElementById('leafletModal').addEventListener('shown.bs.modal', () => {
+      const form = document.getElementById('leaflet-form');
+      if (!form || form.dataset.handlerAttached === 'true') {
+        return; // Handler schon gesetzt oder kein Formular vorhanden
+      }
 
-              // Popup-Inhalt ersetzen (statt nur Nachricht unten drunter)
-              marker.getPopup().setContent(popupContent);
-              setTimeout(() => {
-                map.closePopup();
-                if (marker) {
-                  map.removeLayer(marker);
-                  marker = null;
-                }
-              }, 8000);
-              form.reset();
-            }).catch(() => {
-              const msgBox = document.getElementById('form-message');
-              msgBox.textContent = 'Fehler beim Absenden!';
-              msgBox.className = 'alert alert-danger mt-2';
-              msgBox.classList.remove('d-none');
-            });
-            setTimeout(() => {
-              map.closePopup();
-              if (marker) {
-                map.removeLayer(marker);
-                marker = null;
-              }
-            }, 8000);
+      // Mini map on top of modal form
+      const miniMapEl = document.getElementById('mini-map');
+      if (miniMapEl) {
+        const lat = parseFloat(document.querySelector('#form-lat').value);
+        const lng = parseFloat(document.querySelector('#form-lng').value);
+        if (!window.miniMap) {
+          window.miniMap = L.map(miniMapEl, {
+            center: [lat, lng],
+            zoom: 17,
+            dragging: false,
+            scrollWheelZoom: false,
+            zoomControl: false,
+            attributionControl: false
           });
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+          }).addTo(window.miniMap);
+          const customIcon = L.icon({
+            iconUrl: sunflowerMapPoints.maps_marker,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [0, -25]
+          });
+          window.miniMarker = L.marker([lat, lng], {
+            icon: customIcon
+          }).addTo(window.miniMap);
+        } else {
+          window.miniMap.setView([lat, lng]);
+          if (window.miniMarker) {
+            window.miniMap.removeLayer(window.miniMarker);
+          }
+          window.miniMarker = L.marker([lat, lng]).addTo(window.miniMap);
+          window.miniMap.invalidateSize();
         }
+      }
+      const mapEl = document.querySelector('#map');
+      const map = mapEl?._leafletMap;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const messageBox = document.getElementById('form-message');
+
+        // Reset message box
+        messageBox.classList.add('d-none', 'alert');
+        messageBox.classList.remove('alert-success', 'alert-danger');
+        messageBox.textContent = '';
+        fetch(sunflowerMapPoints.ajaxurl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: formData
+        }).then(response => response.json()).then(data => {
+          if (data.success) {
+            form.classList.add('d-none');
+            form.reset();
+            messageBox.innerHTML = data?.messageafter;
+            messageBox.classList.remove('d-none');
+            messageBox.classList.add('alert', 'alert-success');
+            setTimeout(() => {
+              const modalEl = document.getElementById('leafletModal');
+              if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal?.hide();
+                messageBox.classList.add('d-none');
+                messageBox.textContent = '';
+                form.classList.remove('d-none');
+
+                // remove marker
+                if (map?._marker) {
+                  map.removeLayer(map._marker);
+                  map._marker = null;
+                }
+              }
+            }, 5000);
+          } else {
+            messageBox.textContent = data?.messageafter || 'Ein Fehler ist aufgetreten.';
+            messageBox.classList.remove('d-none');
+            messageBox.classList.add('alert', 'alert-danger');
+          }
+        }).catch(() => {
+          messageBox.textContent = 'Fehler bei der Übertragung.';
+          messageBox.classList.remove('d-none');
+          messageBox.classList.add('alert', 'alert-danger');
+        });
       });
+
+      // Markiere, dass der Handler schon gesetzt wurde
+      form.dataset.handlerAttached = 'true';
+    });
+    document.getElementById('leafletModal').addEventListener('hidden.bs.modal', () => {
+      const form = document.getElementById('leaflet-form');
+      form.dataset.handlerAttached = 'false';
+      form.reset();
+      if (window.miniMap) {
+        window.miniMap.remove();
+        window.miniMap = null;
+        window.miniMarker = null;
+      }
     });
   });
   observer.observe(document.body, {
