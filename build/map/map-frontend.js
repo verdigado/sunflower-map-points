@@ -109,114 +109,121 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#form-lng').value = lastLng;
 
         // Modal anzeigen
-        const modal = new bootstrap.Modal(document.getElementById('leafletModal'));
-        modal.show();
+        if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal === 'function') {
+          const modal = new bootstrap.Modal(document.getElementById('leafletModal'));
+          modal.show();
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('Bootstrap is not available');
+        }
       });
     });
-    document.getElementById('leafletModal').addEventListener('shown.bs.modal', () => {
-      const form = document.getElementById('leaflet-form');
-      if (!form || form.dataset.handlerAttached === 'true') {
-        return; // Handler schon gesetzt oder kein Formular vorhanden
-      }
-
-      // Mini map on top of modal form
-      const miniMapEl = document.getElementById('mini-map');
-      if (miniMapEl) {
-        const lat = parseFloat(document.querySelector('#form-lat').value);
-        const lng = parseFloat(document.querySelector('#form-lng').value);
-        if (!window.miniMap) {
-          window.miniMap = L.map(miniMapEl, {
-            center: [lat, lng],
-            zoom: 17,
-            dragging: false,
-            scrollWheelZoom: false,
-            zoomControl: false,
-            attributionControl: false
-          });
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19
-          }).addTo(window.miniMap);
-          const customIcon = L.icon({
-            iconUrl: sunflowerMapPoints.maps_marker,
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [0, -25]
-          });
-          window.miniMarker = L.marker([lat, lng], {
-            icon: customIcon
-          }).addTo(window.miniMap);
-        } else {
-          window.miniMap.setView([lat, lng]);
-          if (window.miniMarker) {
-            window.miniMap.removeLayer(window.miniMarker);
-          }
-          window.miniMarker = L.marker([lat, lng]).addTo(window.miniMap);
-          window.miniMap.invalidateSize();
+    const modalEl = document.getElementById('leafletModal');
+    if (modalEl) {
+      modalEl.addEventListener('shown.bs.modal', () => {
+        const form = document.getElementById('leaflet-form');
+        if (!form || form.dataset.handlerAttached === 'true') {
+          return; // Handler schon gesetzt oder kein Formular vorhanden
         }
-      }
-      const mapEl = document.querySelector('#map');
-      const map = mapEl?._leafletMap;
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(form);
-        const messageBox = document.getElementById('form-message');
 
-        // Reset message box
-        messageBox.classList.add('d-none', 'alert');
-        messageBox.classList.remove('alert-success', 'alert-danger');
-        messageBox.textContent = '';
-        fetch(sunflowerMapPoints.ajaxurl, {
-          method: 'POST',
-          credentials: 'same-origin',
-          body: formData
-        }).then(response => response.json()).then(data => {
-          if (data.success) {
-            form.classList.add('d-none');
-            form.reset();
-            messageBox.innerHTML = data?.messageafter;
-            messageBox.classList.remove('d-none');
-            messageBox.classList.add('alert', 'alert-success');
-            setTimeout(() => {
-              const modalEl = document.getElementById('leafletModal');
-              if (modalEl) {
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                modal?.hide();
-                messageBox.classList.add('d-none');
-                messageBox.textContent = '';
-                form.classList.remove('d-none');
-
-                // remove marker
-                if (map?._marker) {
-                  map.removeLayer(map._marker);
-                  map._marker = null;
-                }
-              }
-            }, 5000);
+        // Mini map on top of modal form
+        const miniMapEl = document.getElementById('mini-map');
+        if (miniMapEl) {
+          const lat = parseFloat(document.querySelector('#form-lat').value);
+          const lng = parseFloat(document.querySelector('#form-lng').value);
+          if (!window.miniMap) {
+            window.miniMap = L.map(miniMapEl, {
+              center: [lat, lng],
+              zoom: 17,
+              dragging: false,
+              scrollWheelZoom: false,
+              zoomControl: false,
+              attributionControl: false
+            });
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19
+            }).addTo(window.miniMap);
+            const customIcon = L.icon({
+              iconUrl: sunflowerMapPoints.maps_marker,
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [0, -25]
+            });
+            window.miniMarker = L.marker([lat, lng], {
+              icon: customIcon
+            }).addTo(window.miniMap);
           } else {
-            messageBox.textContent = data?.messageafter || 'Ein Fehler ist aufgetreten.';
+            window.miniMap.setView([lat, lng]);
+            if (window.miniMarker) {
+              window.miniMap.removeLayer(window.miniMarker);
+            }
+            window.miniMarker = L.marker([lat, lng]).addTo(window.miniMap);
+            window.miniMap.invalidateSize();
+          }
+        }
+        const mapEl = document.querySelector('#map');
+        const map = mapEl?._leafletMap;
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const formData = new FormData(form);
+          const messageBox = document.getElementById('form-message');
+
+          // Reset message box
+          messageBox.classList.add('d-none', 'alert');
+          messageBox.classList.remove('alert-success', 'alert-danger');
+          messageBox.textContent = '';
+          fetch(sunflowerMapPoints.ajaxurl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+          }).then(response => response.json()).then(data => {
+            if (data.success) {
+              form.classList.add('d-none');
+              form.reset();
+              messageBox.innerHTML = data?.messageafter;
+              messageBox.classList.remove('d-none');
+              messageBox.classList.add('alert', 'alert-success');
+              setTimeout(() => {
+                if (modalEl) {
+                  const modal = bootstrap.Modal.getInstance(modalEl);
+                  modal?.hide();
+                  messageBox.classList.add('d-none');
+                  messageBox.textContent = '';
+                  form.classList.remove('d-none');
+
+                  // remove marker
+                  if (map?._marker) {
+                    map.removeLayer(map._marker);
+                    map._marker = null;
+                  }
+                }
+              }, 5000);
+            } else {
+              messageBox.textContent = data?.messageafter || 'Ein Fehler ist aufgetreten.';
+              messageBox.classList.remove('d-none');
+              messageBox.classList.add('alert', 'alert-danger');
+            }
+          }).catch(() => {
+            messageBox.textContent = 'Fehler bei der Übertragung.';
             messageBox.classList.remove('d-none');
             messageBox.classList.add('alert', 'alert-danger');
-          }
-        }).catch(() => {
-          messageBox.textContent = 'Fehler bei der Übertragung.';
-          messageBox.classList.remove('d-none');
-          messageBox.classList.add('alert', 'alert-danger');
+          });
         });
-      });
 
-      // Markiere, dass der Handler schon gesetzt wurde
-      form.dataset.handlerAttached = 'true';
-    });
-    document.getElementById('leafletModal').addEventListener('hidden.bs.modal', () => {
-      const form = document.getElementById('leaflet-form');
-      form.dataset.handlerAttached = 'false';
-      form.reset();
-      if (window.miniMap) {
-        window.miniMap.remove();
-        window.miniMap = null;
-        window.miniMarker = null;
-      }
-    });
+        // Markiere, dass der Handler schon gesetzt wurde
+        form.dataset.handlerAttached = 'true';
+      });
+      modalEl.addEventListener('hidden.bs.modal', () => {
+        const form = document.getElementById('leaflet-form');
+        form.dataset.handlerAttached = 'false';
+        form.reset();
+        if (window.miniMap) {
+          window.miniMap.remove();
+          window.miniMap = null;
+          window.miniMarker = null;
+        }
+      });
+    }
   });
   observer.observe(document.body, {
     childList: true,

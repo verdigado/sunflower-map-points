@@ -126,16 +126,24 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				document.querySelector( '#form-lng' ).value = lastLng;
 
 				// Modal anzeigen
-				const modal = new bootstrap.Modal(
-					document.getElementById( 'leafletModal' )
-				);
-				modal.show();
+				if (
+					typeof bootstrap !== 'undefined' &&
+					typeof bootstrap.Modal === 'function'
+				) {
+					const modal = new bootstrap.Modal(
+						document.getElementById( 'leafletModal' )
+					);
+					modal.show();
+				} else {
+					// eslint-disable-next-line no-console
+					console.log( 'Bootstrap is not available' );
+				}
 			} );
 		} );
 
-		document
-			.getElementById( 'leafletModal' )
-			.addEventListener( 'shown.bs.modal', () => {
+		const modalEl = document.getElementById( 'leafletModal' );
+		if ( modalEl ) {
+			modalEl.addEventListener( 'shown.bs.modal', () => {
 				const form = document.getElementById( 'leaflet-form' );
 
 				if ( ! form || form.dataset.handlerAttached === 'true' ) {
@@ -225,10 +233,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 									'alert-success'
 								);
 								setTimeout( () => {
-									const modalEl =
-										document.getElementById(
-											'leafletModal'
-										);
 									if ( modalEl ) {
 										const modal =
 											bootstrap.Modal.getInstance(
@@ -269,9 +273,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				form.dataset.handlerAttached = 'true';
 			} );
 
-		document
-			.getElementById( 'leafletModal' )
-			.addEventListener( 'hidden.bs.modal', () => {
+			modalEl.addEventListener( 'hidden.bs.modal', () => {
 				const form = document.getElementById( 'leaflet-form' );
 				form.dataset.handlerAttached = 'false';
 				form.reset();
@@ -282,6 +284,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 					window.miniMarker = null;
 				}
 			} );
+		}
 	} );
 
 	observer.observe( document.body, { childList: true, subtree: true } );
