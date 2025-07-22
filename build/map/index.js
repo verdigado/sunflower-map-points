@@ -28,10 +28,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_server_side_render__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/server-side-render */ "@wordpress/server-side-render");
-/* harmony import */ var _wordpress_server_side_render__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_server_side_render__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
+/* global L */
+/* global sunflowerMapPoints */
 /**
  * Retrieves the translation of text.
  *
@@ -72,6 +74,8 @@ function Edit({
     height,
     mailTo
   } = attributes;
+  const mapContainerRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useRef)(null);
+  const leafletMapRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useRef)(null);
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)({
     className: 'row'
   });
@@ -80,39 +84,156 @@ function Edit({
       mailTo: input === undefined ? '' : input
     });
   };
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useLayoutEffect)(() => {
+    if (typeof L === 'undefined') {
+      // eslint-disable-next-line no-console
+      console.error((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Leaflet is not available', 'sunflower-map-points-map'));
+      return;
+    }
+
+    // Verhindern, dass die Karte mehrfach initialisiert wird
+    if (!mapContainerRef.current || leafletMapRef.current) {
+      return;
+    }
+    const map = L.map(mapContainerRef.current, {
+      scrollWheelZoom: true,
+      dragging: true,
+      fullscreenControl: true
+    }).setView([attributes.lat, attributes.lng], attributes.zoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18
+    }).addTo(map);
+
+    // Custom "Locate Me" Control
+    L.Control.LocateControl = L.Control.extend({
+      onAdd() {
+        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        container.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
+        container.style.backgroundColor = 'white';
+        container.style.width = '34px';
+        container.style.height = '34px';
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
+        container.style.cursor = 'pointer';
+        container.onclick = function () {
+          map.locate({
+            setView: true,
+            maxZoom: 15
+          });
+        };
+
+        // Mausinteraktion auf der Karte nicht blockieren
+        L.DomEvent.disableClickPropagation(container);
+        return container;
+      }
+    });
+    map.addControl(new L.Control.LocateControl({
+      position: 'topright'
+    }));
+    map.on('locationfound', function (e) {
+      L.marker(e.latlng).addTo(map).bindPopup((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Your are here!', 'sunflower-map-points-map')).openPopup();
+      L.circle(e.latlng, {
+        radius: e.accuracy,
+        color: '#136aec',
+        fillColor: '#136aec',
+        fillOpacity: 0.2
+      }).addTo(map);
+    });
+    map.on('locationerror', function (e) {
+      // eslint-disable-next-line no-alert, no-undef
+      alert((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Your location couldn\'t be found.', 'sunflower-map-points-map') + '\n' + e.message);
+    });
+
+    // Klick auf Karte → Marker + Attribute setzen
+    map.on('click', function (e) {
+      const {
+        lat: clickedLat,
+        lng: clickedLng
+      } = e.latlng;
+
+      // marker icon
+      const customIcon = L.icon({
+        iconUrl: sunflowerMapPoints.maps_marker,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [0, -25]
+      });
+
+      // remove old marker icon
+      if (map._marker) {
+        map.removeLayer(map._marker);
+      }
+
+      // set new marker
+      map._marker = L.marker([clickedLat, clickedLng], {
+        icon: customIcon
+      }).addTo(map);
+
+      // center map on new marker position
+      map.setView([clickedLat, clickedLng], map.getZoom());
+
+      // Workaround to enable dragging in Gutenberg editor.
+      map.dragging.disable();
+      map.dragging.enable();
+      setAttributes({
+        lat: parseFloat(clickedLat.toFixed(6)),
+        lng: parseFloat(clickedLng.toFixed(6))
+      });
+    });
+    map.on('zoomend', function () {
+      const currentZoom = map.getZoom();
+      setAttributes({
+        zoom: currentZoom
+      });
+    });
+    leafletMapRef.current = map;
+  }, [attributes.lat, attributes.lng, attributes.zoom, setAttributes]);
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useEffect)(() => {
+    const map = leafletMapRef.current;
+    if (map && typeof map.setZoom === 'function') {
+      map.setZoom(attributes.zoom);
+    }
+  }, [attributes.zoom]);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
     ...blockProps,
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Disabled, {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)((_wordpress_server_side_render__WEBPACK_IMPORTED_MODULE_3___default()), {
-          block: 'sunflower-map-points/map',
-          attributes: {
-            lat,
-            lng,
-            zoom,
-            height,
-            mailTo
-          }
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+        className: "map-container",
+        style: {
+          height: `${attributes.height || 400}px`
+        },
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+          ref: mapContainerRef,
+          style: {
+            width: '100%',
+            height: '100%'
+          },
+          id: "leaflet-editor-map"
         })
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-          title: "Karteneinstellungen",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-            label: "Latitude",
+          title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Map Settings', 'sunflower-map-points-map'),
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+            className: "components-base-control__help",
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Click into the map and move to the right position. The position and zoom level will be used in the map settings.', 'sunflower-map-points-map')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Latitude', 'sunflower-map-points-map'),
             value: lat,
             onChange: val => setAttributes({
               lat: parseFloat(val)
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-            label: "Longitude",
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Longitude', 'sunflower-map-points-map'),
             value: lng,
             onChange: val => setAttributes({
               lng: parseFloat(val)
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.RangeControl, {
-            label: "Zoom",
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Zoom', 'sunflower-map-points-map'),
             value: zoom,
             onChange: val => setAttributes({
               zoom: val
@@ -120,7 +241,7 @@ function Edit({
             min: 1,
             max: 18
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalNumberControl, {
-            label: "Height",
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Height', 'sunflower-map-points-map'),
             value: height,
             onChange: value => {
               const parsed = parseInt(value);
@@ -241,6 +362,16 @@ module.exports = window["wp"]["components"];
 
 /***/ }),
 
+/***/ "@wordpress/element":
+/*!*********************************!*\
+  !*** external ["wp","element"] ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["element"];
+
+/***/ }),
+
 /***/ "@wordpress/i18n":
 /*!******************************!*\
   !*** external ["wp","i18n"] ***!
@@ -248,16 +379,6 @@ module.exports = window["wp"]["components"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["i18n"];
-
-/***/ }),
-
-/***/ "@wordpress/server-side-render":
-/*!******************************************!*\
-  !*** external ["wp","serverSideRender"] ***!
-  \******************************************/
-/***/ ((module) => {
-
-module.exports = window["wp"]["serverSideRender"];
 
 /***/ }),
 

@@ -2,12 +2,20 @@
 /* global MutationObserver */
 /* global sunflowerMapPoints */
 /* global bootstrap */
+
+/**
+ * Retrieves the translation of text.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
+ */
+import { __ } from '@wordpress/i18n';
+
 document.addEventListener( 'DOMContentLoaded', () => {
 	const observer = new MutationObserver( () => {
 		document.querySelectorAll( '.map-container' ).forEach( ( el ) => {
 			if ( typeof L === 'undefined' ) {
 				// eslint-disable-next-line no-console
-				console.error( 'Leaflet is not available' );
+				console.error( __( 'Leaflet is not available', 'sunflower-map-points-map' ) );
 				return;
 			}
 
@@ -75,7 +83,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			map.on( 'locationfound', function ( e ) {
 				const marker = L.marker( e.latlng )
 					.addTo( map )
-					.bindPopup( 'Du bist hier!' )
+					.bindPopup(__( 'Your are here!', 'sunflower-map-points-map' ) )
 					.openPopup();
 
 				L.circle( e.latlng, {
@@ -93,7 +101,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 			map.on( 'locationerror', function ( e ) {
 				// eslint-disable-next-line no-alert, no-undef
-				alert( 'Standort konnte nicht gefunden werden: ' + e.message );
+				alert( __( 'Your location couldn\'t be found.', 'sunflower-map-points-map' ) + '\n' + e.message );
 			} );
 
 			let lastLat = null;
@@ -103,7 +111,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				lastLat = e.latlng.lat.toFixed( 6 );
 				lastLng = e.latlng.lng.toFixed( 6 );
 
-				// Marker-Icon
+				// marker icon
 				const customIcon = L.icon( {
 					iconUrl: sunflowerMapPoints.maps_marker,
 					iconSize: [ 25, 41 ],
@@ -111,35 +119,43 @@ document.addEventListener( 'DOMContentLoaded', () => {
 					popupAnchor: [ 0, -25 ],
 				} );
 
-				// Alten Marker entfernen
+				// remove old marker icon
 				if ( map._marker ) {
 					map.removeLayer( map._marker );
 				}
 
-				// Neuen Marker setzen
+				// set new marker
 				map._marker = L.marker( [ lastLat, lastLng ], {
 					icon: customIcon,
 				} ).addTo( map );
 
-				// Formular-Werte setzen
+				// write location to modal form input fields
 				document.querySelector( '#form-lat' ).value = lastLat;
 				document.querySelector( '#form-lng' ).value = lastLng;
 
-				// Modal anzeigen
-				const modal = new bootstrap.Modal(
-					document.getElementById( 'leafletModal' )
-				);
-				modal.show();
+				// show modal
+				if (
+					typeof bootstrap !== 'undefined' &&
+					typeof bootstrap.Modal === 'function'
+				) {
+					const modal = new bootstrap.Modal(
+						document.getElementById( 'leafletModal' )
+					);
+					modal.show();
+				} else {
+					// eslint-disable-next-line no-console
+					console.log( __( 'Bootstrap is not available', 'sunflower-map-points-map' ) );
+				}
 			} );
 		} );
 
-		document
-			.getElementById( 'leafletModal' )
-			.addEventListener( 'shown.bs.modal', () => {
+		const modalEl = document.getElementById( 'leafletModal' );
+		if ( modalEl ) {
+			modalEl.addEventListener( 'shown.bs.modal', () => {
 				const form = document.getElementById( 'leaflet-form' );
 
 				if ( ! form || form.dataset.handlerAttached === 'true' ) {
-					return; // Handler schon gesetzt oder kein Formular vorhanden
+					return;
 				}
 
 				// Mini map on top of modal form
@@ -225,10 +241,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 									'alert-success'
 								);
 								setTimeout( () => {
-									const modalEl =
-										document.getElementById(
-											'leafletModal'
-										);
 									if ( modalEl ) {
 										const modal =
 											bootstrap.Modal.getInstance(
@@ -249,7 +261,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 							} else {
 								messageBox.textContent =
 									data?.messageafter ||
-									'Ein Fehler ist aufgetreten.';
+									 __( 'An error occured!', 'sunflower-map-points-map' );
 								messageBox.classList.remove( 'd-none' );
 								messageBox.classList.add(
 									'alert',
@@ -259,7 +271,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 						} )
 						.catch( () => {
 							messageBox.textContent =
-								'Fehler bei der Übertragung.';
+								__( 'Error on transmitting the form data.', 'sunflower-map-points-map' );
 							messageBox.classList.remove( 'd-none' );
 							messageBox.classList.add( 'alert', 'alert-danger' );
 						} );
@@ -269,9 +281,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				form.dataset.handlerAttached = 'true';
 			} );
 
-		document
-			.getElementById( 'leafletModal' )
-			.addEventListener( 'hidden.bs.modal', () => {
+			modalEl.addEventListener( 'hidden.bs.modal', () => {
 				const form = document.getElementById( 'leaflet-form' );
 				form.dataset.handlerAttached = 'false';
 				form.reset();
@@ -282,6 +292,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 					window.miniMarker = null;
 				}
 			} );
+		}
 	} );
 
 	observer.observe( document.body, { childList: true, subtree: true } );

@@ -21,10 +21,10 @@ if ( isset( $attributes['lat'] ) && ! empty( $attributes['lat'] ) ) {
 		)
 	);
 
-	printf( '<div id="map" style="height: %spx;"></div>', esc_attr( $attributes['height'] ) );
+	printf( '<div id="map" style="height: %spx;"></div></div>', esc_attr( $attributes['height'] ) );
 }
 ?>
-<div class="modal fade" id="leafletModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="leafletModal" tabindex="-1" style="display: none;" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">

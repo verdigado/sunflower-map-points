@@ -34,7 +34,6 @@ if ( ! defined( 'SUNFLOWER_MAP_POINTS_VERSION' ) ) {
 
 require_once 'inc/custom-pois.php';
 
-
 /**
  * Enqueue leaflet library from Sunflower theme.
  */
@@ -48,7 +47,7 @@ function sunflower_map_points_enqueue_styles() {
 			'sunflowerMapPoints',
 			array(
 				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-				'maps_marker' => plugin_dir_url( __FILE__ ) . '/assets/img/marker.png',
+				'maps_marker' => plugin_dir_url( __FILE__ ) . 'assets/img/marker.png',
 				'texts'       => array(
 					'readmore' => __( 'Continue reading', 'sunflower' ),
 				),
@@ -57,6 +56,9 @@ function sunflower_map_points_enqueue_styles() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'sunflower_map_points_enqueue_styles' );
+
+// Enqueue in block editor as well.
+add_action( 'enqueue_block_editor_assets', 'sunflower_map_points_enqueue_styles' );
 
 add_action( 'wp_ajax_send_leaflet_form', 'sunflower_map_points_handle_leaflet_form' );
 add_action( 'wp_ajax_nopriv_send_leaflet_form', 'sunflower_map_points_handle_leaflet_form' );

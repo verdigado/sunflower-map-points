@@ -1,17 +1,111 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "@wordpress/i18n":
+/*!******************************!*\
+  !*** external ["wp","i18n"] ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["i18n"];
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
 /*!*********************************!*\
   !*** ./src/map/map-frontend.js ***!
   \*********************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
 /* global L */
 /* global MutationObserver */
 /* global sunflowerMapPoints */
 /* global bootstrap */
+
+/**
+ * Retrieves the translation of text.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
   const observer = new MutationObserver(() => {
     document.querySelectorAll('.map-container').forEach(el => {
       if (typeof L === 'undefined') {
         // eslint-disable-next-line no-console
-        console.error('Leaflet is not available');
+        console.error((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Leaflet is not available', 'sunflower-map-points-map'));
         return;
       }
       const mapEl = el.querySelector('#map');
@@ -63,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         position: 'topright'
       }));
       map.on('locationfound', function (e) {
-        const marker = L.marker(e.latlng).addTo(map).bindPopup('Du bist hier!').openPopup();
+        const marker = L.marker(e.latlng).addTo(map).bindPopup((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Your are here!', 'sunflower-map-points-map')).openPopup();
         L.circle(e.latlng, {
           radius: e.accuracy,
           color: '#136aec',
@@ -78,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       map.on('locationerror', function (e) {
         // eslint-disable-next-line no-alert, no-undef
-        alert('Standort konnte nicht gefunden werden: ' + e.message);
+        alert((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Your location couldn\'t be found.', 'sunflower-map-points-map') + '\n' + e.message);
       });
       let lastLat = null;
       let lastLng = null;
@@ -86,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastLat = e.latlng.lat.toFixed(6);
         lastLng = e.latlng.lng.toFixed(6);
 
-        // Marker-Icon
+        // marker icon
         const customIcon = L.icon({
           iconUrl: sunflowerMapPoints.maps_marker,
           iconSize: [25, 41],
@@ -94,135 +188,144 @@ document.addEventListener('DOMContentLoaded', () => {
           popupAnchor: [0, -25]
         });
 
-        // Alten Marker entfernen
+        // remove old marker icon
         if (map._marker) {
           map.removeLayer(map._marker);
         }
 
-        // Neuen Marker setzen
+        // set new marker
         map._marker = L.marker([lastLat, lastLng], {
           icon: customIcon
         }).addTo(map);
 
-        // Formular-Werte setzen
+        // write location to modal form input fields
         document.querySelector('#form-lat').value = lastLat;
         document.querySelector('#form-lng').value = lastLng;
 
-        // Modal anzeigen
-        const modal = new bootstrap.Modal(document.getElementById('leafletModal'));
-        modal.show();
+        // show modal
+        if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal === 'function') {
+          const modal = new bootstrap.Modal(document.getElementById('leafletModal'));
+          modal.show();
+        } else {
+          // eslint-disable-next-line no-console
+          console.log((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Bootstrap is not available', 'sunflower-map-points-map'));
+        }
       });
     });
-    document.getElementById('leafletModal').addEventListener('shown.bs.modal', () => {
-      const form = document.getElementById('leaflet-form');
-      if (!form || form.dataset.handlerAttached === 'true') {
-        return; // Handler schon gesetzt oder kein Formular vorhanden
-      }
-
-      // Mini map on top of modal form
-      const miniMapEl = document.getElementById('mini-map');
-      if (miniMapEl) {
-        const lat = parseFloat(document.querySelector('#form-lat').value);
-        const lng = parseFloat(document.querySelector('#form-lng').value);
-        if (!window.miniMap) {
-          window.miniMap = L.map(miniMapEl, {
-            center: [lat, lng],
-            zoom: 17,
-            dragging: false,
-            scrollWheelZoom: false,
-            zoomControl: false,
-            attributionControl: false
-          });
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19
-          }).addTo(window.miniMap);
-          const customIcon = L.icon({
-            iconUrl: sunflowerMapPoints.maps_marker,
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [0, -25]
-          });
-          window.miniMarker = L.marker([lat, lng], {
-            icon: customIcon
-          }).addTo(window.miniMap);
-        } else {
-          window.miniMap.setView([lat, lng]);
-          if (window.miniMarker) {
-            window.miniMap.removeLayer(window.miniMarker);
-          }
-          window.miniMarker = L.marker([lat, lng]).addTo(window.miniMap);
-          window.miniMap.invalidateSize();
+    const modalEl = document.getElementById('leafletModal');
+    if (modalEl) {
+      modalEl.addEventListener('shown.bs.modal', () => {
+        const form = document.getElementById('leaflet-form');
+        if (!form || form.dataset.handlerAttached === 'true') {
+          return;
         }
-      }
-      const mapEl = document.querySelector('#map');
-      const map = mapEl?._leafletMap;
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(form);
-        const messageBox = document.getElementById('form-message');
 
-        // Reset message box
-        messageBox.classList.add('d-none', 'alert');
-        messageBox.classList.remove('alert-success', 'alert-danger');
-        messageBox.textContent = '';
-        fetch(sunflowerMapPoints.ajaxurl, {
-          method: 'POST',
-          credentials: 'same-origin',
-          body: formData
-        }).then(response => response.json()).then(data => {
-          if (data.success) {
-            form.classList.add('d-none');
-            form.reset();
-            messageBox.innerHTML = data?.messageafter;
-            messageBox.classList.remove('d-none');
-            messageBox.classList.add('alert', 'alert-success');
-            setTimeout(() => {
-              const modalEl = document.getElementById('leafletModal');
-              if (modalEl) {
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                modal?.hide();
-                messageBox.classList.add('d-none');
-                messageBox.textContent = '';
-                form.classList.remove('d-none');
-
-                // remove marker
-                if (map?._marker) {
-                  map.removeLayer(map._marker);
-                  map._marker = null;
-                }
-              }
-            }, 5000);
+        // Mini map on top of modal form
+        const miniMapEl = document.getElementById('mini-map');
+        if (miniMapEl) {
+          const lat = parseFloat(document.querySelector('#form-lat').value);
+          const lng = parseFloat(document.querySelector('#form-lng').value);
+          if (!window.miniMap) {
+            window.miniMap = L.map(miniMapEl, {
+              center: [lat, lng],
+              zoom: 17,
+              dragging: false,
+              scrollWheelZoom: false,
+              zoomControl: false,
+              attributionControl: false
+            });
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19
+            }).addTo(window.miniMap);
+            const customIcon = L.icon({
+              iconUrl: sunflowerMapPoints.maps_marker,
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [0, -25]
+            });
+            window.miniMarker = L.marker([lat, lng], {
+              icon: customIcon
+            }).addTo(window.miniMap);
           } else {
-            messageBox.textContent = data?.messageafter || 'Ein Fehler ist aufgetreten.';
+            window.miniMap.setView([lat, lng]);
+            if (window.miniMarker) {
+              window.miniMap.removeLayer(window.miniMarker);
+            }
+            window.miniMarker = L.marker([lat, lng]).addTo(window.miniMap);
+            window.miniMap.invalidateSize();
+          }
+        }
+        const mapEl = document.querySelector('#map');
+        const map = mapEl?._leafletMap;
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const formData = new FormData(form);
+          const messageBox = document.getElementById('form-message');
+
+          // Reset message box
+          messageBox.classList.add('d-none', 'alert');
+          messageBox.classList.remove('alert-success', 'alert-danger');
+          messageBox.textContent = '';
+          fetch(sunflowerMapPoints.ajaxurl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+          }).then(response => response.json()).then(data => {
+            if (data.success) {
+              form.classList.add('d-none');
+              form.reset();
+              messageBox.innerHTML = data?.messageafter;
+              messageBox.classList.remove('d-none');
+              messageBox.classList.add('alert', 'alert-success');
+              setTimeout(() => {
+                if (modalEl) {
+                  const modal = bootstrap.Modal.getInstance(modalEl);
+                  modal?.hide();
+                  messageBox.classList.add('d-none');
+                  messageBox.textContent = '';
+                  form.classList.remove('d-none');
+
+                  // remove marker
+                  if (map?._marker) {
+                    map.removeLayer(map._marker);
+                    map._marker = null;
+                  }
+                }
+              }, 5000);
+            } else {
+              messageBox.textContent = data?.messageafter || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('An error occured!', 'sunflower-map-points-map');
+              messageBox.classList.remove('d-none');
+              messageBox.classList.add('alert', 'alert-danger');
+            }
+          }).catch(() => {
+            messageBox.textContent = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Error on transmitting the form data.', 'sunflower-map-points-map');
             messageBox.classList.remove('d-none');
             messageBox.classList.add('alert', 'alert-danger');
-          }
-        }).catch(() => {
-          messageBox.textContent = 'Fehler bei der Übertragung.';
-          messageBox.classList.remove('d-none');
-          messageBox.classList.add('alert', 'alert-danger');
+          });
         });
-      });
 
-      // Markiere, dass der Handler schon gesetzt wurde
-      form.dataset.handlerAttached = 'true';
-    });
-    document.getElementById('leafletModal').addEventListener('hidden.bs.modal', () => {
-      const form = document.getElementById('leaflet-form');
-      form.dataset.handlerAttached = 'false';
-      form.reset();
-      if (window.miniMap) {
-        window.miniMap.remove();
-        window.miniMap = null;
-        window.miniMarker = null;
-      }
-    });
+        // Markiere, dass der Handler schon gesetzt wurde
+        form.dataset.handlerAttached = 'true';
+      });
+      modalEl.addEventListener('hidden.bs.modal', () => {
+        const form = document.getElementById('leaflet-form');
+        form.dataset.handlerAttached = 'false';
+        form.reset();
+        if (window.miniMap) {
+          window.miniMap.remove();
+          window.miniMap = null;
+          window.miniMarker = null;
+        }
+      });
+    }
   });
   observer.observe(document.body, {
     childList: true,
     subtree: true
   });
 });
+})();
+
 /******/ })()
 ;
 //# sourceMappingURL=map-frontend.js.map
