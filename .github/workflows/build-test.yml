@@ -56,7 +56,6 @@ jobs:
       - name: run install composer
         run: |
             composer install
-            cd lib && composer install
 
       - name: Run PHPCS checks
         id: phpcs
