@@ -3,7 +3,6 @@
  * Main file of the sunflower map points plugin.
  *
  * @package Sunflower Map Points
- * @version 1.3.0
  *
  * @wordpress-plugin
  * Plugin Name: Sunflower Map Points

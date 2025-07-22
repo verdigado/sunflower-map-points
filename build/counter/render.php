@@ -3,7 +3,7 @@
  * Server-side rendering for the Counter block
  */
 
-	$date = isset( $attributes['dateFrom'] ) ? sanitize_text_field( $attributes['dateFrom'] ) : '';
+	$date        = isset( $attributes['dateFrom'] ) ? sanitize_text_field( $attributes['dateFrom'] ) : '';
 	$labelBefore = esc_html( $attributes['labelBefore'] ?? '' );
 	$labelAfter  = esc_html( $attributes['labelAfter'] ?? '' );
 	$showDate    = $attributes['showDate'] ?? false;

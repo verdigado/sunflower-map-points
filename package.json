@@ -26,22 +26,8 @@
     "dir-archiver": "^2.1.0",
     "sass": "^1.77.8"
   },
-  "rtlcssConfig": {
-    "options": {
-      "autoRename": false,
-      "autoRenameStrict": false,
-      "blacklist": {},
-      "clean": true,
-      "greedy": false,
-      "processUrls": false,
-      "stringMap": []
-    },
-    "plugins": [],
-    "map": false
-  },
   "scripts": {
     "watch": "sass sass/style.scss ./style.css -w",
-    "compile:css": "sass sass/style.scss ./style.css && stylelint '*.css' --fix || true && stylelint '*.css' --fix",
     "compile:build": "sass sass/style.scss ./style.css",
     "lint:scss": "wp-scripts lint-style 'sass/**/*.scss' 'src/**/*.scss'",
     "lint:js": "wp-scripts lint-js 'js/*.js' 'src/**/*.js' 'assets/js/*.js'",
