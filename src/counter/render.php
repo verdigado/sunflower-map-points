@@ -1,38 +1,36 @@
 <?php
 /**
  * Server-side rendering for the Counter block
+ *
+ * @package sunflower-map-points
  */
 
-	$date        = isset( $attributes['dateFrom'] ) ? sanitize_text_field( $attributes['dateFrom'] ) : '';
-	$labelBefore = esc_html( $attributes['labelBefore'] ?? '' );
-	$labelAfter  = esc_html( $attributes['labelAfter'] ?? '' );
-	$showDate    = $attributes['showDate'] ?? false;
+$sunflower_map_points_date = isset( $attributes['dateFrom'] ) ? sanitize_text_field( $attributes['dateFrom'] ) : '';
 
-	$args = array(
-		'post_type'      => 'custompoi',
-		'post_status'    => 'publish',
-		'posts_per_page' => -1,
-		'date_query'     => array(),
-		'fields'         => 'ids', // nur IDs für Performance
+$sunflower_map_points_args = array(
+	'post_type'      => 'custompoi',
+	'post_status'    => 'publish',
+	'posts_per_page' => -1,
+	'date_query'     => array(),
+	'fields'         => 'ids',
+);
+
+if ( $sunflower_map_points_date ) {
+	$sunflower_map_points_args['date_query'][] = array(
+		'after'     => $sunflower_map_points_date,
+		'inclusive' => true,
 	);
+}
 
-	if ( $date ) {
-		$args['date_query'][] = array(
-			'after'     => $date,
-			'inclusive' => true,
-		);
-	}
+$sunflower_map_points_count = count( get_posts( $sunflower_map_points_args ) );
 
-	$posts = get_posts( $args );
-	$count = count( $posts );
+$sunflower_map_points_text_template = $attributes['text'] ?? '%%COUNT%% since %%DATE%%.';
+$sunflower_map_points_display_date  = $sunflower_map_points_date ? date_i18n( get_option( 'date_format' ), strtotime( $sunflower_map_points_date ) ) : '';
 
-	$text_template = $attributes['text'] ?? '%%COUNT%% since %%DATE%%.';
-	$display_date  = $date ? date_i18n( get_option( 'date_format' ), strtotime( $date ) ) : '';
+$sunflower_map_points_display_output = str_replace(
+	array( '%%COUNT%%', '%%DATE%%' ),
+	array( $sunflower_map_points_count, $sunflower_map_points_display_date ),
+	$sunflower_map_points_text_template
+);
 
-	$output = str_replace(
-		array( '%%COUNT%%', '%%DATE%%' ),
-		array( $count, $display_date ),
-		$text_template
-	);
-
-	echo '<div class="sunflower-map-counter">' . esc_html( $output ) . '</div>';
+echo '<div class="sunflower-map-counter">' . esc_html( $sunflower_map_points_display_output ) . '</div>';

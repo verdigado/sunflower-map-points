@@ -23,10 +23,6 @@
     "text": {
       "type": "string",
       "default": "💚 Es sind %%COUNT%% Hinweise seit %%DATE%% eingegangen!"
-    },
-    "showDate": {
-      "type": "boolean",
-      "default": true
     }
   },
   "supports": {

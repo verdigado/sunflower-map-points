@@ -8,7 +8,7 @@
   \********************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"sunflower-map-points/counter","textdomain":"sunflower-map-points-counter","title":"Leaflet Hint Counter","description":"Counter for the sunflower map points.","category":"widgets","icon":"location-alt","attributes":{"dateFrom":{"type":"string","default":""},"labelBefore":{"type":"string","default":"Hinweise seit"},"labelAfter":{"type":"string","default":"eingegangen"},"text":{"type":"string","default":"💚 Es sind %%COUNT%% Hinweise seit %%DATE%% eingegangen!"},"showDate":{"type":"boolean","default":true}},"supports":{"html":false},"editorScript":["file:./index.js"],"style":["file:./style-index.css","sunflower-leaflet"],"render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"sunflower-map-points/counter","textdomain":"sunflower-map-points-counter","title":"Leaflet Hint Counter","description":"Counter for the sunflower map points.","category":"widgets","icon":"location-alt","attributes":{"dateFrom":{"type":"string","default":""},"labelBefore":{"type":"string","default":"Hinweise seit"},"labelAfter":{"type":"string","default":"eingegangen"},"text":{"type":"string","default":"💚 Es sind %%COUNT%% Hinweise seit %%DATE%% eingegangen!"}},"supports":{"html":false},"editorScript":["file:./index.js"],"style":["file:./style-index.css","sunflower-leaflet"],"render":"file:./render.php"}');
 
 /***/ }),
 
