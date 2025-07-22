@@ -162,6 +162,16 @@ function sunflower_map_points_blocks_init() {
 		'sunflower-map-points-map',
 		plugin_dir_path( __FILE__ ) . 'languages'
 	);
+
+	// Register counter block.
+	register_block_type( __DIR__ . '/build/counter' );
+
+	// Load translation file.
+	wp_set_script_translations(
+		'sunflower-map-points-counter-editor-script',
+		'sunflower-map-points-counter',
+		plugin_dir_path( __FILE__ ) . 'languages'
+	);
 }
 
 /**
