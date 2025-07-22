@@ -18,6 +18,7 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import {
 	RangeControl,
 	PanelBody,
+	PanelRow,
 	TextControl,
 	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
@@ -49,7 +50,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	useLayoutEffect( () => {
 		if ( typeof L === 'undefined' ) {
 			// eslint-disable-next-line no-console
-			console.error( 'Leaflet is not loaded' );
+			console.error( __( 'Leaflet is not available', 'sunflower-map-points-map' ) );
 			return;
 		}
 
@@ -105,7 +106,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		map.on( 'locationfound', function ( e ) {
 			L.marker( e.latlng )
 				.addTo( map )
-				.bindPopup( 'Du bist hier!' )
+				.bindPopup(__( 'Your are here!', 'sunflower-map-points-map' ) )
 				.openPopup();
 
 			L.circle( e.latlng, {
@@ -118,14 +119,14 @@ export default function Edit( { attributes, setAttributes } ) {
 
 		map.on( 'locationerror', function ( e ) {
 			// eslint-disable-next-line no-alert, no-undef
-			alert( 'Standort konnte nicht gefunden werden: ' + e.message );
+			alert( __( 'Your location couldn\'t be found.', 'sunflower-map-points-map' ) + '\n' + e.message );
 		} );
 
 		// Klick auf Karte → Marker + Attribute setzen
 		map.on( 'click', function ( e ) {
 			const { lat: clickedLat, lng: clickedLng } = e.latlng;
 
-			// Marker-Icon
+			// marker icon
 			const customIcon = L.icon( {
 				iconUrl: sunflowerMapPoints.maps_marker,
 				iconSize: [ 25, 41 ],
@@ -133,17 +134,17 @@ export default function Edit( { attributes, setAttributes } ) {
 				popupAnchor: [ 0, -25 ],
 			} );
 
-			// Alten Marker entfernen
+			// remove old marker icon
 			if ( map._marker ) {
 				map.removeLayer( map._marker );
 			}
 
-			// Neuen Marker setzen
+			// set new marker
 			map._marker = L.marker( [ clickedLat, clickedLng ], {
 				icon: customIcon,
 			} ).addTo( map );
 
-			// Karte auf neue Position zentrieren (ohne Zoom zu verändern)
+			// center map on new marker position
 			map.setView( [ clickedLat, clickedLng ], map.getZoom() );
 
 			// Workaround to enable dragging in Gutenberg editor.
@@ -190,23 +191,43 @@ export default function Edit( { attributes, setAttributes } ) {
 			{
 				<>
 					<InspectorControls>
-						<PanelBody title="Karteneinstellungen">
+						<PanelBody
+								title={ __(
+									'Map Settings',
+									'sunflower-map-points-map'
+								) }
+								>
+							<p className="components-base-control__help">
+								{ __(
+									'Click into the map and move to the right position. The position and zoom level will be used in the map settings.',
+									'sunflower-map-points-map'
+								) }
+							</p>
 							<TextControl
-								label="Latitude"
+								label={ __(
+									'Latitude',
+									'sunflower-map-points-map'
+								) }
 								value={ lat }
 								onChange={ ( val ) =>
 									setAttributes( { lat: parseFloat( val ) } )
 								}
 							/>
 							<TextControl
-								label="Longitude"
+								label={ __(
+									'Longitude',
+									'sunflower-map-points-map'
+								) }
 								value={ lng }
 								onChange={ ( val ) =>
 									setAttributes( { lng: parseFloat( val ) } )
 								}
 							/>
 							<RangeControl
-								label="Zoom"
+								label={ __(
+									'Zoom',
+									'sunflower-map-points-map'
+								) }
 								value={ zoom }
 								onChange={ ( val ) =>
 									setAttributes( { zoom: val } )
@@ -215,7 +236,10 @@ export default function Edit( { attributes, setAttributes } ) {
 								max={ 18 }
 							/>
 							<NumberControl
-								label="Height"
+								label={ __(
+									'Height',
+									'sunflower-map-points-map'
+								) }
 								value={ height }
 								onChange={ ( value ) => {
 									const parsed = parseInt( value );

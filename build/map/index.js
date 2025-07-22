@@ -87,7 +87,7 @@ function Edit({
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useLayoutEffect)(() => {
     if (typeof L === 'undefined') {
       // eslint-disable-next-line no-console
-      console.error('Leaflet is not loaded');
+      console.error((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Leaflet is not available', 'sunflower-map-points-map'));
       return;
     }
 
@@ -133,7 +133,7 @@ function Edit({
       position: 'topright'
     }));
     map.on('locationfound', function (e) {
-      L.marker(e.latlng).addTo(map).bindPopup('Du bist hier!').openPopup();
+      L.marker(e.latlng).addTo(map).bindPopup((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Your are here!', 'sunflower-map-points-map')).openPopup();
       L.circle(e.latlng, {
         radius: e.accuracy,
         color: '#136aec',
@@ -143,7 +143,7 @@ function Edit({
     });
     map.on('locationerror', function (e) {
       // eslint-disable-next-line no-alert, no-undef
-      alert('Standort konnte nicht gefunden werden: ' + e.message);
+      alert((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Your location couldn\'t be found.', 'sunflower-map-points-map') + '\n' + e.message);
     });
 
     // Klick auf Karte → Marker + Attribute setzen
@@ -153,7 +153,7 @@ function Edit({
         lng: clickedLng
       } = e.latlng;
 
-      // Marker-Icon
+      // marker icon
       const customIcon = L.icon({
         iconUrl: sunflowerMapPoints.maps_marker,
         iconSize: [25, 41],
@@ -161,17 +161,17 @@ function Edit({
         popupAnchor: [0, -25]
       });
 
-      // Alten Marker entfernen
+      // remove old marker icon
       if (map._marker) {
         map.removeLayer(map._marker);
       }
 
-      // Neuen Marker setzen
+      // set new marker
       map._marker = L.marker([clickedLat, clickedLng], {
         icon: customIcon
       }).addTo(map);
 
-      // Karte auf neue Position zentrieren (ohne Zoom zu verändern)
+      // center map on new marker position
       map.setView([clickedLat, clickedLng], map.getZoom());
 
       // Workaround to enable dragging in Gutenberg editor.
@@ -216,21 +216,24 @@ function Edit({
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-          title: "Karteneinstellungen",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-            label: "Latitude",
+          title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Map Settings', 'sunflower-map-points-map'),
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
+            className: "components-base-control__help",
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Click into the map and move to the right position. The position and zoom level will be used in the map settings.', 'sunflower-map-points-map')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Latitude', 'sunflower-map-points-map'),
             value: lat,
             onChange: val => setAttributes({
               lat: parseFloat(val)
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-            label: "Longitude",
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Longitude', 'sunflower-map-points-map'),
             value: lng,
             onChange: val => setAttributes({
               lng: parseFloat(val)
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.RangeControl, {
-            label: "Zoom",
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Zoom', 'sunflower-map-points-map'),
             value: zoom,
             onChange: val => setAttributes({
               zoom: val
@@ -238,7 +241,7 @@ function Edit({
             min: 1,
             max: 18
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalNumberControl, {
-            label: "Height",
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Height', 'sunflower-map-points-map'),
             value: height,
             onChange: value => {
               const parsed = parseInt(value);
