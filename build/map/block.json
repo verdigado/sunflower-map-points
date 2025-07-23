@@ -43,5 +43,8 @@
     "file:./style-index.css",
     "sunflower-leaflet"
   ],
-  "render": "file:./render.php"
+  "render": "file:./render.php",
+  "viewScript": [
+    "file:./view.js"
+  ]
 }

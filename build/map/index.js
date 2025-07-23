@@ -8,7 +8,7 @@
   \****************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"sunflower-map-points/map","textdomain":"sunflower-map-points-map","title":"Leaflet Formular Map","description":"Eine interaktive Karte mit Formular.","category":"widgets","icon":"location-alt","attributes":{"lat":{"type":"number","default":51.25426},"lng":{"type":"number","default":7.14987},"zoom":{"type":"number","default":13},"height":{"type":"number","default":600},"mailTo":{"type":"string","default":""}},"supports":{"html":false},"editorScript":["file:./index.js"],"script":["file:./map-frontend.js","sunflower-leaflet"],"style":["file:./style-index.css","sunflower-leaflet"],"render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"sunflower-map-points/map","textdomain":"sunflower-map-points-map","title":"Leaflet Formular Map","description":"Eine interaktive Karte mit Formular.","category":"widgets","icon":"location-alt","attributes":{"lat":{"type":"number","default":51.25426},"lng":{"type":"number","default":7.14987},"zoom":{"type":"number","default":13},"height":{"type":"number","default":600},"mailTo":{"type":"string","default":""}},"supports":{"html":false},"editorScript":["file:./index.js"],"script":["file:./map-frontend.js","sunflower-leaflet"],"style":["file:./style-index.css","sunflower-leaflet"],"render":"file:./render.php","viewScript":["file:./view.js"]}');
 
 /***/ }),
 
