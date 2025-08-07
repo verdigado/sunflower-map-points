@@ -87,6 +87,7 @@
 		<properties>
 			<property name="text_domain" type="array">
 				<element value="sunflower-map-points"/>
+				<element value="sunflower"/>
 				<element value="default"/>
 			</property>
 		</properties>
