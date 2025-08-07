@@ -15,7 +15,9 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		document.querySelectorAll( '.map-container' ).forEach( ( el ) => {
 			if ( typeof L === 'undefined' ) {
 				// eslint-disable-next-line no-console
-				console.error( __( 'Leaflet is not available', 'sunflower-map-points-map' ) );
+				console.error(
+					__( 'Leaflet is not available', 'sunflower-map-points-map' )
+				);
 				return;
 			}
 
@@ -83,7 +85,9 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			map.on( 'locationfound', function ( e ) {
 				const marker = L.marker( e.latlng )
 					.addTo( map )
-					.bindPopup(__( 'Your are here!', 'sunflower-map-points-map' ) )
+					.bindPopup(
+						__( 'Your are here!', 'sunflower-map-points-map' )
+					)
 					.openPopup();
 
 				L.circle( e.latlng, {
@@ -101,7 +105,14 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 			map.on( 'locationerror', function ( e ) {
 				// eslint-disable-next-line no-alert, no-undef
-				alert( __( 'Your location couldn\'t be found.', 'sunflower-map-points-map' ) + '\n' + e.message );
+				alert(
+					__(
+						"Your location couldn't be found.",
+						'sunflower-map-points-map'
+					) +
+						'\n' +
+						e.message
+				);
 			} );
 
 			let lastLat = null;
@@ -144,7 +155,12 @@ document.addEventListener( 'DOMContentLoaded', () => {
 					modal.show();
 				} else {
 					// eslint-disable-next-line no-console
-					console.log( __( 'Bootstrap is not available', 'sunflower-map-points-map' ) );
+					console.log(
+						__(
+							'Bootstrap is not available',
+							'sunflower-map-points-map'
+						)
+					);
 				}
 			} );
 		} );
@@ -210,8 +226,29 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				const mapEl = document.querySelector( '#map' );
 				const map = mapEl?._leafletMap;
 
-				form.addEventListener( 'submit', function ( e ) {
+				let isSubmitting = false;
+
+				// register only once
+				if ( ! form.dataset.listenerBound ) {
+					form.addEventListener( 'submit', formSubmitHandler );
+					form.dataset.listenerBound = 'true';
+				}
+
+				function formSubmitHandler( e ) {
 					e.preventDefault();
+
+					if ( isSubmitting ) {
+						return; // block further submits
+					}
+
+					isSubmitting = true;
+
+					const button = form.querySelector(
+						'button[type="submit"]'
+					);
+					button.disabled = true;
+					button.style.opacity = 0.5;
+
 					const formData = new FormData( form );
 					const messageBox =
 						document.getElementById( 'form-message' );
@@ -234,6 +271,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 							if ( data.success ) {
 								form.classList.add( 'd-none' );
 								form.reset();
+
 								messageBox.innerHTML = data?.messageafter;
 								messageBox.classList.remove( 'd-none' );
 								messageBox.classList.add(
@@ -257,12 +295,20 @@ document.addEventListener( 'DOMContentLoaded', () => {
 											map._marker = null;
 										}
 									}
+
+									isSubmitting = false;
 								}, 5000 );
 							} else {
 								messageBox.textContent =
 									data?.messageafter ||
-									 __( 'An error occured!', 'sunflower-map-points-map' );
+									__(
+										'An error occured!',
+										'sunflower-map-points-map'
+									);
 								messageBox.classList.remove( 'd-none' );
+								isSubmitting = false;
+								button.disabled = false;
+								button.style.opacity = 1;
 								messageBox.classList.add(
 									'alert',
 									'alert-danger'
@@ -270,12 +316,17 @@ document.addEventListener( 'DOMContentLoaded', () => {
 							}
 						} )
 						.catch( () => {
-							messageBox.textContent =
-								__( 'Error on transmitting the form data.', 'sunflower-map-points-map' );
+							messageBox.textContent = __(
+								'Error on transmitting the form data.',
+								'sunflower-map-points-map'
+							);
 							messageBox.classList.remove( 'd-none' );
 							messageBox.classList.add( 'alert', 'alert-danger' );
+							isSubmitting = false;
+							button.disabled = false;
+							button.style.opacity = 1;
 						} );
-				} );
+				}
 
 				// Markiere, dass der Handler schon gesetzt wurde
 				form.dataset.handlerAttached = 'true';
@@ -285,6 +336,11 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				const form = document.getElementById( 'leaflet-form' );
 				form.dataset.handlerAttached = 'false';
 				form.reset();
+
+				// re-enable the submit button to allow multiple, different submits
+				const button = form.querySelector( 'button[type="submit"]' );
+				button.disabled = false;
+				button.style.opacity = 1;
 
 				if ( window.miniMap ) {
 					window.miniMap.remove();

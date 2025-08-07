@@ -7,7 +7,7 @@
  * @wordpress-plugin
  * Plugin Name: Sunflower Map Points
  * Description: Simple plugin allowing map points and suggestions.
- * Version: 1.5.0
+ * Version: 1.5.1
  * Author: verdigado eG, Alexander Bigga
  * Author URI: https://github.com/verdigado/sunflower-map-points
  * License: GPLv3
@@ -78,6 +78,22 @@ function sunflower_map_points_handle_leaflet_form() {
 	$email   = sanitize_text_field( $_POST['email'] ?? '' );
 	$phone   = sanitize_text_field( $_POST['phone'] ?? '' );
 	$topic   = sanitize_text_field( $_POST['topic'] ?? '' );
+
+	// Set lock to avoid duplicates.
+	$user_ip = $_SERVER['REMOTE_ADDR'];
+	$key     = 'form_lock_' . md5( implode( $_POST ) . $user_ip );
+
+	if ( get_transient( $key ) ) {
+		wp_send_json(
+			array(
+				'success'      => false,
+				'messageafter' => 'Fehler beim Speichern.',
+			)
+		);
+		return;
+	}
+
+	set_transient( $key, true, 10 );
 
 	$mail_to = sanitize_text_field( $_POST['mailTo'] );
 	if ( $mail_to ) {

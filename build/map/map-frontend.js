@@ -257,8 +257,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const mapEl = document.querySelector('#map');
         const map = mapEl?._leafletMap;
-        form.addEventListener('submit', function (e) {
+        let isSubmitting = false;
+
+        // register only once
+        if (!form.dataset.listenerBound) {
+          form.addEventListener('submit', formSubmitHandler);
+          form.dataset.listenerBound = 'true';
+        }
+        function formSubmitHandler(e) {
           e.preventDefault();
+          if (isSubmitting) {
+            return; // block further submits
+          }
+          isSubmitting = true;
+          const button = form.querySelector('button[type="submit"]');
+          button.disabled = true;
+          button.style.opacity = 0.5;
           const formData = new FormData(form);
           const messageBox = document.getElementById('form-message');
 
@@ -291,18 +305,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     map._marker = null;
                   }
                 }
+                isSubmitting = false;
               }, 5000);
             } else {
               messageBox.textContent = data?.messageafter || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('An error occured!', 'sunflower-map-points-map');
               messageBox.classList.remove('d-none');
+              isSubmitting = false;
+              button.disabled = false;
+              button.style.opacity = 1;
               messageBox.classList.add('alert', 'alert-danger');
             }
           }).catch(() => {
             messageBox.textContent = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Error on transmitting the form data.', 'sunflower-map-points-map');
             messageBox.classList.remove('d-none');
             messageBox.classList.add('alert', 'alert-danger');
+            isSubmitting = false;
+            button.disabled = false;
+            button.style.opacity = 1;
           });
-        });
+        }
+        ;
 
         // Markiere, dass der Handler schon gesetzt wurde
         form.dataset.handlerAttached = 'true';
@@ -311,6 +333,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('leaflet-form');
         form.dataset.handlerAttached = 'false';
         form.reset();
+
+        // re-enable the submit button to allow multiple, different submits
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = false;
+        button.style.opacity = 1;
         if (window.miniMap) {
           window.miniMap.remove();
           window.miniMap = null;
