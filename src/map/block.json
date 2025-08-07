@@ -35,6 +35,5 @@
   "editorScript": ["file:./index.js"],
   "script": ["file:./map-frontend.js", "sunflower-leaflet"],
   "style": ["file:./style-index.css", "sunflower-leaflet"],
-  "render": "file:./render.php",
-  "viewScript": [ "file:./view.js" ]
+  "render": "file:./render.php"
 }
