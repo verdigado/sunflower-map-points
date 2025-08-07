@@ -1,9 +1,22 @@
-# sunflower-map-points
+# Sunflower Map Points
 
 ## Developement
 
 ### Language Files
 
+#### Plugin
+
+1. create / update .pot file for the plugin strings
+```
+wp i18n make-pot --domain=sunflower-map-points . --exclude=src languages/sunflower-map-points.pot
+```
+
+2. edit / update the language files
+
+poedit sunflower-map-points-de_DE.po
+--> Update with sunflower-map-points.pot
+
+#### Blocks
 
 1. create / update .pot file for map block
 ```

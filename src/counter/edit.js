@@ -31,17 +31,17 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Counter Settings', 'sunflower-map-points' ) }>
+				<PanelBody title={ __( 'Counter Settings', 'sunflower-map-points-counter' ) }>
 
 					<TextareaControl
-						label={ __( 'Anzeigetext', 'sunflower-map-points' ) }
+						label={ __( 'Anzeigetext', 'sunflower-map-points-counter' ) }
 						value={ text }
 						onChange={ ( value ) => setAttributes( { text: value } ) }
-						help={ __( 'Platzhalter: %%COUNT%%, %%DATE%%', 'sunflower-map-points-counter' ) }
+						help={ __( 'Placeholder: %%COUNT%%, %%DATE%%', 'sunflower-map-points-counter' ) }
 					/>
 
 					<TextControl
-						label={ __( 'Date (YYYY-MM-DD)', 'sunflower-map-points' ) }
+						label={ __( 'Date (YYYY-MM-DD)', 'sunflower-map-points-counter' ) }
 						value={ dateFrom }
 						placeholder="2024-01-01"
 						onChange={ ( value ) =>
