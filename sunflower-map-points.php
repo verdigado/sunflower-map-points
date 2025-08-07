@@ -7,10 +7,11 @@
  * @wordpress-plugin
  * Plugin Name: Sunflower Map Points
  * Description: Simple plugin allowing map points and suggestions.
- * Version: 1.4.2
- * Author: Alexander Bigga
- * License: GPL v2 oder später
- * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * Version: 1.5.0
+ * Author: verdigado eG, Alexander Bigga
+ * Author URI: https://github.com/verdigado/sunflower-map-points
+ * License: GPLv3
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.txt
  * Text Domain: sunflower-map-point
  * Domain Path: /languages
  * Requires at least: 6.8
@@ -32,6 +33,7 @@ if ( ! defined( 'SUNFLOWER_MAP_POINTS_VERSION' ) ) {
 }
 
 require_once 'inc/custom-pois.php';
+require_once 'inc/export-csv.php';
 
 /**
  * Enqueue leaflet library from Sunflower theme.
@@ -177,7 +179,15 @@ function sunflower_map_points_blocks_init() {
  * Add the block language files.
  */
 function sunflower_map_points_blocks_load_textdomain() {
+	load_plugin_textdomain( 'sunflower-map-points', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	load_plugin_textdomain( 'sunflower-map-points-map', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
 add_action( 'after_setup_theme', 'sunflower_map_points_blocks_load_textdomain' );
+
+add_action(
+	'admin_post_export_custompois_csv',
+	function () {
+		sunflower_map_points_export_pois_as_csv();
+	}
+);

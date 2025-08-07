@@ -1,0 +1,60 @@
+# Copyright (C) 2025 verdigado eG, Alexander Bigga
+# This file is distributed under the GPL v2 oder später.
+msgid ""
+msgstr ""
+"Project-Id-Version: Sunflower Map Points 1.5.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sunflower-map-points\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-08-07T11:45:53+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: sunflower-map-points\n"
+
+#. Plugin Name of the plugin
+#: sunflower-map-points.php
+msgid "Sunflower Map Points"
+msgstr ""
+
+#. Description of the plugin
+#: sunflower-map-points.php
+msgid "Simple plugin allowing map points and suggestions."
+msgstr ""
+
+#. Author of the plugin
+#: sunflower-map-points.php
+msgid "verdigado eG, Alexander Bigga"
+msgstr ""
+
+#. Author URI of the plugin
+#: sunflower-map-points.php
+msgid "https://github.com/verdigado/sunflower-map-points"
+msgstr ""
+
+#: inc/export-csv.php:7
+#: inc/export-csv.php:8
+msgid "Export POIs"
+msgstr ""
+
+#: inc/export-csv.php:24
+msgid "Export POIs as CSV"
+msgstr ""
+
+#: inc/export-csv.php:25
+msgid "Export"
+msgstr ""
+
+#: inc/export-csv.php:37
+msgid "Date"
+msgstr ""
+
+#: inc/export-csv.php:37
+msgid "Phone"
+msgstr ""
+
+#: inc/export-csv.php:37
+msgid "Note"
+msgstr ""

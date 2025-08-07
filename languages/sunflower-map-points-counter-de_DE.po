@@ -1,0 +1,67 @@
+# Copyright (C) 2025 verdigado eG, Alexander Bigga
+# This file is distributed under the GPL v2 oder später.
+msgid ""
+msgstr ""
+"Project-Id-Version: Sunflower Map Points 1.5.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sunflower-map-"
+"points-counter\n"
+"POT-Creation-Date: 2025-08-07T11:54:01+00:00\n"
+"PO-Revision-Date: 2025-08-07 13:57+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Domain: sunflower-map-points-counter\n"
+
+#. Plugin Name of the plugin
+#: sunflower-map-points.php
+msgid "Sunflower Map Points"
+msgstr ""
+
+#. Description of the plugin
+#: sunflower-map-points.php
+msgid "Simple plugin allowing map points and suggestions."
+msgstr ""
+
+#. Author of the plugin
+#: sunflower-map-points.php
+msgid "verdigado eG, Alexander Bigga"
+msgstr ""
+
+#. Author URI of the plugin
+#: sunflower-map-points.php
+msgid "https://github.com/verdigado/sunflower-map-points"
+msgstr ""
+
+#: build/counter/index.js:64 build/counter/index.js:34
+msgid "Counter Settings"
+msgstr ""
+
+#: build/counter/index.js:66 build/counter/index.js:37
+msgid "Anzeigetext"
+msgstr ""
+
+#: build/counter/index.js:71 build/counter/index.js:40
+msgid "Placeholder: %%COUNT%%, %%DATE%%"
+msgstr "Platzhalter: %%COUNT%%, %%DATE%%"
+
+#: build/counter/index.js:73 build/counter/index.js:44
+msgid "Date (YYYY-MM-DD)"
+msgstr "Datum (YYYY-MM-DD)"
+
+#: build/counter/index.js:79 build/counter/index.js:50
+msgid "Nur Hinweise nach diesem Datum zählen"
+msgstr ""
+
+#: build/counter/block.json
+msgctxt "block title"
+msgid "Leaflet Hint Counter"
+msgstr ""
+
+#: build/counter/block.json
+msgctxt "block description"
+msgid "Counter for the sunflower map points."
+msgstr ""
