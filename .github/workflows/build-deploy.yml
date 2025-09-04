@@ -69,3 +69,28 @@ jobs:
           artifacts: "sunflower-map-points-${{ github.event.release.tag_name }}.zip"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Provide deploy_key
+        env:
+          DEPLOY_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USER: 'github-ci'
+          SSH_HOST: 'wordpress05.gcms.verdigado.net'
+        run: |
+          mkdir "$HOME/.ssh"
+          echo "$DEPLOY_KEY" > "$HOME/.ssh/production.key"
+          chmod 600 "$HOME/.ssh/production.key"
+          cat >> ~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/production.key
+            StrictHostKeyChecking no
+          END
+
+      - name: save version
+        run: echo ${{ github.event.release.tag_name }} > version.txt
+
+      - name: rsync zipfile, version and changelog
+        run: |
+            rsync -a sunflower-map-points-${{ github.event.release.tag_name }}.zip version.txt changelog.html production:/var/www/updateserver/sunflower-map-points/
+            PLUGIN_VERSION=$(cat version.txt | sed -e 's/^v//')

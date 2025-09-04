@@ -7,7 +7,7 @@
  * @wordpress-plugin
  * Plugin Name: Sunflower Map Points
  * Description: Simple plugin allowing map points and suggestions.
- * Version: 1.5.1
+ * Version: 1.5.2
  * Author: verdigado eG, Alexander Bigga
  * Author URI: https://github.com/verdigado/sunflower-map-points
  * License: GPLv3
@@ -18,6 +18,8 @@
  * Requires PHP: 8.2
  * Requires Plugins:
  * Requires Themes: sunflower
+ * Plugin URI:  https://github.com/verdigado/sunflower-map-points
+ * Update URI: https://sunflower-theme.de/updateserver/sunflower-map-points/
  *
  * @since 1.0.0
  */
@@ -34,6 +36,7 @@ if ( ! defined( 'SUNFLOWER_MAP_POINTS_VERSION' ) ) {
 
 require_once 'inc/custom-pois.php';
 require_once 'inc/export-csv.php';
+require_once 'inc/update.php';
 
 /**
  * Enqueue leaflet library from Sunflower theme.
