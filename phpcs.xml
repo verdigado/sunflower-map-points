@@ -97,6 +97,8 @@
 		<properties>
 			<property name="prefixes" type="array">
 				<element value="sunflower_map_points"/>
+				<element value="sunflower"/>
+				<element value="default"/>
 			</property>
 		</properties>
 	</rule>
