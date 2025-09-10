@@ -18,7 +18,6 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import {
 	RangeControl,
 	PanelBody,
-	PanelRow,
 	TextControl,
 	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
@@ -50,7 +49,9 @@ export default function Edit( { attributes, setAttributes } ) {
 	useLayoutEffect( () => {
 		if ( typeof L === 'undefined' ) {
 			// eslint-disable-next-line no-console
-			console.error( __( 'Leaflet is not available', 'sunflower-map-points-map' ) );
+			console.error(
+				__( 'Leaflet is not available', 'sunflower-map-points-map' )
+			);
 			return;
 		}
 
@@ -80,7 +81,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 				container.innerHTML =
 					'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 48C337.7 48 352 62.3 352 80L352 98.3C450.1 112.3 527.7 189.9 541.7 288L560 288C577.7 288 592 302.3 592 320C592 337.7 577.7 352 560 352L541.7 352C527.7 450.1 450.1 527.7 352 541.7L352 560C352 577.7 337.7 592 320 592C302.3 592 288 577.7 288 560L288 541.7C189.9 527.7 112.3 450.1 98.3 352L80 352C62.3 352 48 337.7 48 320C48 302.3 62.3 288 80 288L98.3 288C112.3 189.9 189.9 112.3 288 98.3L288 80C288 62.3 302.3 48 320 48zM163.2 352C175.9 414.7 225.3 464.1 288 476.8L288 464C288 446.3 302.3 432 320 432C337.7 432 352 446.3 352 464L352 476.8C414.7 464.1 464.1 414.7 476.8 352L464 352C446.3 352 432 337.7 432 320C432 302.3 446.3 288 464 288L476.8 288C464.1 225.3 414.7 175.9 352 163.2L352 176C352 193.7 337.7 208 320 208C302.3 208 288 193.7 288 176L288 163.2C225.3 175.9 175.9 225.3 163.2 288L176 288C193.7 288 208 302.3 208 320C208 337.7 193.7 352 176 352L163.2 352zM320 272C346.5 272 368 293.5 368 320C368 346.5 346.5 368 320 368C293.5 368 272 346.5 272 320C272 293.5 293.5 272 320 272z"/></svg>';
-				container.title = __('Locate me', 'sunflower-map-points-map');
+				container.title = __( 'Locate me', 'sunflower-map-points-map' );
 				container.style.backgroundColor = 'white';
 				container.style.width = '34px';
 				container.style.height = '34px';
@@ -107,7 +108,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		map.on( 'locationfound', function ( e ) {
 			L.marker( e.latlng )
 				.addTo( map )
-				.bindPopup(__( 'Your are here!', 'sunflower-map-points-map' ) )
+				.bindPopup( __( 'Your are here!', 'sunflower-map-points-map' ) )
 				.openPopup();
 
 			L.circle( e.latlng, {
@@ -120,7 +121,14 @@ export default function Edit( { attributes, setAttributes } ) {
 
 		map.on( 'locationerror', function ( e ) {
 			// eslint-disable-next-line no-alert, no-undef
-			alert( __( 'Your location couldn\'t be found.', 'sunflower-map-points-map' ) + '\n' + e.message );
+			alert(
+				__(
+					"Your location couldn't be found.",
+					'sunflower-map-points-map'
+				) +
+					'\n' +
+					e.message
+			);
 		} );
 
 		// Klick auf Karte → Marker + Attribute setzen
@@ -193,11 +201,11 @@ export default function Edit( { attributes, setAttributes } ) {
 				<>
 					<InspectorControls>
 						<PanelBody
-								title={ __(
-									'Map Settings',
-									'sunflower-map-points-map'
-								) }
-								>
+							title={ __(
+								'Map Settings',
+								'sunflower-map-points-map'
+							) }
+						>
 							<p className="components-base-control__help">
 								{ __(
 									'Click into the map and move to the right position. The position and zoom level will be used in the map settings.',
