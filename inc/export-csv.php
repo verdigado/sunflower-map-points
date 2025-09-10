@@ -19,6 +19,13 @@ add_action(
 	}
 );
 
+add_action(
+	'admin_post_export_custompois_csv',
+	function () {
+		sunflower_map_points_export_pois_as_csv();
+	}
+);
+
 /**
  * Page for export function
  */

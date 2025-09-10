@@ -17,7 +17,6 @@
  * Requires at least: 6.8
  * Requires PHP: 8.2
  * Requires Plugins:
- * Requires Themes: sunflower
  * Plugin URI:  https://github.com/verdigado/sunflower-map-points
  * Update URI: https://sunflower-theme.de/updateserver/sunflower-map-points/
  *
@@ -39,7 +38,7 @@ require_once 'inc/export-csv.php';
 require_once 'inc/update.php';
 
 /**
- * Enqueue leaflet library from Sunflower theme.
+ * Enqueue map block map-frontend.js.
  */
 function sunflower_map_points_enqueue_styles() {
 	global $post;
@@ -52,9 +51,7 @@ function sunflower_map_points_enqueue_styles() {
 			array(
 				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
 				'maps_marker' => plugin_dir_url( __FILE__ ) . 'assets/img/marker.png',
-				'texts'       => array(
-					'readmore' => __( 'Continue reading', 'sunflower' ),
-				),
+
 			)
 		);
 	}
@@ -159,7 +156,7 @@ function sunflower_map_points_blocks_init() {
 	// Register leaflet library.
 	wp_register_script(
 		'sunflower-leaflet',
-		get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.js',
+		plugin_dir_path( __FILE__ ) . 'assets/vndr/leaflet/dist/leaflet.js',
 		array(),
 		SUNFLOWER_MAP_POINTS_VERSION,
 		true
@@ -168,7 +165,7 @@ function sunflower_map_points_blocks_init() {
 	// Register leaflet styles.
 	wp_register_style(
 		'sunflower-leaflet',
-		get_template_directory_uri() . '/assets/vndr/leaflet/dist/leaflet.css',
+		plugin_dir_path( __FILE__ ) . 'assets/vndr/leaflet/dist/leaflet.css',
 		array(),
 		SUNFLOWER_MAP_POINTS_VERSION
 	);
@@ -203,10 +200,3 @@ function sunflower_map_points_blocks_load_textdomain() {
 }
 
 add_action( 'after_setup_theme', 'sunflower_map_points_blocks_load_textdomain' );
-
-add_action(
-	'admin_post_export_custompois_csv',
-	function () {
-		sunflower_map_points_export_pois_as_csv();
-	}
-);
