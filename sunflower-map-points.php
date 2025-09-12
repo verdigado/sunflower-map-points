@@ -156,7 +156,7 @@ function sunflower_map_points_blocks_init() {
 	// Register leaflet library.
 	wp_register_script(
 		'sunflower-leaflet',
-		plugin_dir_path( __FILE__ ) . 'assets/vndr/leaflet/dist/leaflet.js',
+		plugin_dir_url( __FILE__ ) . 'assets/vndr/leaflet/dist/leaflet.js',
 		array(),
 		SUNFLOWER_MAP_POINTS_VERSION,
 		true
@@ -165,7 +165,7 @@ function sunflower_map_points_blocks_init() {
 	// Register leaflet styles.
 	wp_register_style(
 		'sunflower-leaflet',
-		plugin_dir_path( __FILE__ ) . 'assets/vndr/leaflet/dist/leaflet.css',
+		plugin_dir_url( __FILE__ ) . 'assets/vndr/leaflet/dist/leaflet.css',
 		array(),
 		SUNFLOWER_MAP_POINTS_VERSION
 	);
