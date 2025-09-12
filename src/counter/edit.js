@@ -16,42 +16,61 @@ import {
 	PanelBody,
 	TextControl,
 	TextareaControl,
-	DatePicker
+	DatePicker,
 } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
 export default function Edit( { attributes, setAttributes } ) {
-	const {
-		dateFrom,
-		text,
-	} = attributes;
+	const { dateFrom, text } = attributes;
 
 	const blockProps = useBlockProps();
 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Counter Settings', 'sunflower-map-points-counter' ) }>
-
+				<PanelBody
+					title={ __(
+						'Counter Settings',
+						'sunflower-map-points-counter'
+					) }
+				>
 					<TextareaControl
-						label={ __( 'Anzeigetext', 'sunflower-map-points-counter' ) }
+						label={ __(
+							'Anzeigetext',
+							'sunflower-map-points-counter'
+						) }
 						value={ text }
-						onChange={ ( value ) => setAttributes( { text: value } ) }
-						help={ __( 'Placeholder: %%COUNT%%, %%DATE%%', 'sunflower-map-points-counter' ) }
+						onChange={ ( value ) =>
+							setAttributes( { text: value } )
+						}
+						help={ __(
+							'Placeholder: %%COUNT%%, %%DATE%%',
+							'sunflower-map-points-counter'
+						) }
 					/>
 
 					<TextControl
-						label={ __( 'Date (YYYY-MM-DD)', 'sunflower-map-points-counter' ) }
+						label={ __(
+							'Date (YYYY-MM-DD)',
+							'sunflower-map-points-counter'
+						) }
 						value={ dateFrom }
 						placeholder="2024-01-01"
 						onChange={ ( value ) =>
 							setAttributes( { dateFrom: value } )
 						}
-						help={ __( 'Nur Hinweise nach diesem Datum zählen', 'sunflower-map-points-counter' ) }
+						help={ __(
+							'Nur Hinweise nach diesem Datum zählen',
+							'sunflower-map-points-counter'
+						) }
 					/>
 					<DatePicker
 						currentDate={ dateFrom }
-						onChange={ ( date ) => setAttributes( { dateFrom: date.substring(0, 10) } ) }
+						onChange={ ( date ) =>
+							setAttributes( {
+								dateFrom: date.substring( 0, 10 ),
+							} )
+						}
 					/>
 				</PanelBody>
 			</InspectorControls>
