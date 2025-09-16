@@ -90,16 +90,16 @@ class SunflowerMapPointsSettingsPage {
 		// Sanitize special values.
 		if ( isset( $input['sunflower_map_points_topics_items'] ) ) {
 
-			$lines = array_filter( array_map( 'trim', explode( "\n", $input['sunflower_map_points_topics_items'] ) ) );
-			$topics = [];
+			$lines  = array_filter( array_map( 'trim', explode( "\n", $input['sunflower_map_points_topics_items'] ) ) );
+			$topics = array();
 
 			foreach ( $lines as $line ) {
 				$parts = array_map( 'trim', explode( ';', $line ) );
 				if ( ! empty( $parts[0] ) ) {
-					$topics[] = [
+					$topics[] = array(
 						'icon'  => $parts[0] ?? '',
 						'label' => $parts[1] ?? '',
-					];
+					);
 				}
 			}
 
@@ -122,11 +122,11 @@ class SunflowerMapPointsSettingsPage {
 		$default_topics[] = 'fa-trash;Abfalleimer';
 		$default_topics[] = 'fa-faucet;Trinkbrunnen';
 
-		$topics = ( isset( $this->options['sunflower_map_points_topics_items'] ) && ! empty( $this->options['sunflower_map_points_topics_items'] ) ) ? json_decode($this->options['sunflower_map_points_topics_items'], true) : '';
+		$topics = ( isset( $this->options['sunflower_map_points_topics_items'] ) && ! empty( $this->options['sunflower_map_points_topics_items'] ) ) ? json_decode( $this->options['sunflower_map_points_topics_items'], true ) : '';
 
-		// Convert json to csv
-		$lines = [];
-		if ( is_array( $topics ) && !empty($topics)) {
+		// Convert json to csv.
+		$lines = array();
+		if ( is_array( $topics ) && ! empty( $topics ) ) {
 			foreach ( $topics as $t ) {
 				$lines[] = $t['icon'] . ';' . $t['label'];
 			}
@@ -148,7 +148,7 @@ class SunflowerMapPointsSettingsPage {
 				<?php
 				printf(
 					'<textarea style="white-space: pre-wrap;width: 90%%;height:18em;font-family: monospace;" rows="7" id="sunflower_map_points_topics_items" name="sunflower_map_points_topics_options[sunflower_map_points_topics_items]">%s</textarea>',
-					$topics_textarea
+					esc_textarea( $topics_textarea )
 				);
 				submit_button();
 				?>

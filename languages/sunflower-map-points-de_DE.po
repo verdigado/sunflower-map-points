@@ -5,21 +5,27 @@ msgstr ""
 "Project-Id-Version: Sunflower Map Points 1.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sunflower-map-"
 "points\n"
-"POT-Creation-Date: 2025-08-07T11:45:53+00:00\n"
-"PO-Revision-Date: 2025-08-07 13:49+0200\n"
+"POT-Creation-Date: 2025-09-16T08:37:15+02:00\n"
+"PO-Revision-Date: 2025-09-16 08:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.6\n"
 "X-Domain: sunflower-map-points\n"
 
 #. Plugin Name of the plugin
 #: sunflower-map-points.php
 msgid "Sunflower Map Points"
 msgstr "Sunflower Kartenhinweise"
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: sunflower-map-points.php
+msgid "https://github.com/verdigado/sunflower-map-points"
+msgstr ""
 
 #. Description of the plugin
 #: sunflower-map-points.php
@@ -31,34 +37,58 @@ msgstr "Plugin zum Sammeln von Hinweisen über eine Karte."
 msgid "verdigado eG, Alexander Bigga"
 msgstr ""
 
-#. Author URI of the plugin
-#: sunflower-map-points.php
-msgid "https://github.com/verdigado/sunflower-map-points"
+#: inc/class-sunflowermappointssettingspage.php:35
+#: inc/class-sunflowermappointssettingspage.php:140
+msgid "Sunflower Map Points Settings"
+msgstr "Sunflower Kartenhinweise Einstellungen"
+
+#: inc/class-sunflowermappointssettingspage.php:36
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: inc/class-sunflowermappointssettingspage.php:61
+msgid "Available topics in all forms"
+msgstr "Verfügbare Themen in den Formularen"
+
+#: inc/class-sunflowermappointssettingspage.php:68
+msgid "Topics"
+msgstr "Themen"
+
+#: inc/class-sunflowermappointssettingspage.php:146
+msgid "Definiere hier die verfügbaren Themen und Icons (FontAwesome-Klassen)."
 msgstr ""
 
-#: inc/export-csv.php:7 inc/export-csv.php:8
+#: inc/class-sunflowermappointssettingspage.php:157
+msgid "Beispiel-Eintrag:"
+msgstr ""
+
+#: inc/export-csv.php:13 inc/export-csv.php:14
 msgid "Export POIs"
 msgstr "POIs exportieren"
 
-#: inc/export-csv.php:24
+#: inc/export-csv.php:37
 msgid "Export POIs as CSV"
 msgstr "Exportiere POIs / Hinweise als CSV"
 
-#: inc/export-csv.php:25
+#: inc/export-csv.php:38
 msgid "Export"
 msgstr "Export"
 
-#: inc/export-csv.php:37
+#: inc/export-csv.php:53
 msgid "Date"
 msgstr "Datum"
 
-#: inc/export-csv.php:37
+#: inc/export-csv.php:53
 msgid "Phone"
 msgstr "Telefon"
 
-#: inc/export-csv.php:37
+#: inc/export-csv.php:53
 msgid "Note"
 msgstr "Hinweis"
+
+#: build/map/index.js:283 src/map/edit.js:299 build/map/index.js:299
+msgid "Formular-Einstellungen"
+msgstr ""
 
 #~ msgid "Date (YYYY-MM-DD)"
 #~ msgstr "Datum (YYYY-MM-DD)"

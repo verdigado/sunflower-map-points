@@ -196,21 +196,21 @@ function sunflower_map_points_blocks_init() {
  * Add the block language files.
  */
 function sunflower_map_points_blocks_load_textdomain() {
-	// add_editor_style( '/assets/css/admin-fontawesome.css' );
-//
 	load_plugin_textdomain( 'sunflower-map-points', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	load_plugin_textdomain( 'sunflower-map-points-map', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
 add_action( 'after_setup_theme', 'sunflower_map_points_blocks_load_textdomain' );
 
-// FontAwesome nur im Backend laden
-add_action( 'admin_enqueue_scripts', function( $hook ) {
-    wp_register_style(
-        'fontawesome6',
-        plugin_dir_url( __FILE__ ) . 'assets/css/admin-fontawesome.css',
-        [],
-        SUNFLOWER_MAP_POINTS_VERSION
-    );
-
-});
+// Load FontAwesome only in backend.
+add_action(
+	'admin_enqueue_scripts',
+	function () {
+		wp_register_style(
+			'fontawesome6',
+			plugin_dir_url( __FILE__ ) . 'assets/css/admin-fontawesome.css',
+			array(),
+			SUNFLOWER_MAP_POINTS_VERSION
+		);
+	}
+);
