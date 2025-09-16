@@ -1,5 +1,6 @@
 /* global L */
 /* global sunflowerMapPoints */
+/* global sunflowerMapPointsTopics */
 /**
  * Retrieves the translation of text.
  *
@@ -35,12 +36,29 @@ import { useLayoutEffect, useEffect, useRef } from '@wordpress/element';
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { lat, lng, zoom, height, mailTo } = attributes;
+	const { lat, lng, zoom, height, mailTo, topics } = attributes;
 	const mapContainerRef = useRef( null );
 	const leafletMapRef = useRef( null );
 	const blockProps = useBlockProps( {
 		className: 'row',
 	} );
+	const allTopics = sunflowerMapPointsTopics || [];
+
+	const toggleTopic = ( value ) => {
+		if ( topics.includes( value ) ) {
+			setAttributes( {
+				topics: topics.filter( ( t ) => t !== value ),
+			} );
+		} else {
+			// Add new topic in the order of allTopics
+			const updated = [ ...topics, value ];
+			const ordered = allTopics
+				.map( ( t ) => t.label )
+				.filter( ( label ) => updated.includes( label ) );
+
+			setAttributes( { topics: ordered } );
+		}
+	};
 
 	const onChangeMailTo = ( input ) => {
 		setAttributes( { mailTo: input === undefined ? '' : input } );
@@ -276,6 +294,52 @@ export default function Edit( { attributes, setAttributes } ) {
 								type="email"
 								onChange={ onChangeMailTo }
 							/>
+						</PanelBody>
+						<PanelBody
+							title={ __(
+								'Formular-Einstellungen',
+								'sunflower-map-points'
+							) }
+						>
+							<p className="components-base-control__help">
+								{ __(
+									'The following topics will be available in the hint form.',
+									'sunflower-map-points-map'
+								) }
+							</p>
+							{ allTopics.map( ( t, index ) => {
+								const checked = topics.includes( t.label );
+								return (
+									<div
+										key={ t.label }
+										className="sunflower-topic-option"
+									>
+										<label htmlFor={ `topic-${ index }` }>
+											<input
+												type="checkbox"
+												checked={ checked }
+												id={ `topic-${ index }` }
+												onChange={ () =>
+													toggleTopic( t.label )
+												}
+											/>
+											<span
+												style={ {
+													marginLeft: '0.5em',
+												} }
+											>
+												<i
+													className={ `fa-solid ${ t.icon }` }
+													style={ {
+														marginRight: '0.3em',
+													} }
+												></i>
+												{ t.label }
+											</span>
+										</label>
+									</div>
+								);
+							} ) }
 						</PanelBody>
 					</InspectorControls>
 				</>

@@ -27,13 +27,17 @@
     "mailTo": {
       "type": "string",
 			"default": ""
-		}
+	},
+  	"topics": {
+    	"type": "array",
+    	"default": [ "Sonstiges", "Baum", "Bank", "Abfalleimer", "Trinkbrunnen" ]
+  	}
   },
   "supports": {
     "html": false
   },
   "editorScript": ["file:./index.js"],
   "script": ["file:./map-frontend.js", "sunflower-leaflet"],
-  "style": ["file:./style-index.css", "sunflower-leaflet"],
+  "style": ["file:./style-index.css", "sunflower-leaflet", "fontawesome6"],
   "render": "file:./render.php"
 }
