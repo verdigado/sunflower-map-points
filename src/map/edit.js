@@ -46,9 +46,17 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const toggleTopic = ( value ) => {
 		if ( topics.includes( value ) ) {
-			setAttributes( { topics: topics.filter( ( t ) => t !== value ) } );
+			setAttributes( {
+				topics: topics.filter( ( t ) => t !== value ),
+			} );
 		} else {
-			setAttributes( { topics: [ ...topics, value ] } );
+			// Add new topic in the order of allTopics
+			const updated = [ ...topics, value ];
+			const ordered = allTopics
+				.map( ( t ) => t.label )
+				.filter( ( label ) => updated.includes( label ) );
+
+			setAttributes( { topics: ordered } );
 		}
 	};
 
