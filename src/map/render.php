@@ -70,11 +70,11 @@ if ( isset( $attributes['lat'] ) && ! empty( $attributes['lat'] ) ) {
 					<div class="mb-3">
 						<label for="topic" class="form-label">Thema (*)</label>
 						<select id="topic" name="topic" class="form-select">
-							<option value="Sonstiges">Sonstiges</option>
-							<option value="Baum">Baum</option>
-							<option value="Bank">Bank</option>
-							<option value="Abfalleimer">Abfalleimer</option>
-							<option value="Trinkbrunnen">Trinkbrunnen</option>
+							<?php foreach ( $attributes['topics'] as $sunflower_map_points_topics ) : ?>
+								<option value="<?php echo esc_attr( trim( $sunflower_map_points_topics ) ); ?>">
+									<i className="fa-solid fa-bicycle"></i> <?php echo esc_html( trim( $sunflower_map_points_topics ) ); ?>
+								</option>
+							<?php endforeach; ?>
 						</select>
 					</div>
 
