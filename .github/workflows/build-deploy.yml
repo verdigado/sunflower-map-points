@@ -7,7 +7,7 @@ on:
     types: [published]
 
 env:
-  NODE_VERSION: 22
+  NODE_VERSION: 24
 
 jobs:
   build-deploy:
@@ -26,15 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Cache node_modules directory
-        uses: actions/cache@v4
-        id: npm-cache-dir
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: npm
 
       - name: Install npm packages
         if: steps.npm-cache-dir.outputs.cache-hit != 'true'
