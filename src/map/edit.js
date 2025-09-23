@@ -1,5 +1,6 @@
 /* global L */
 /* global sunflowerMapPoints */
+/* global sunflowerMapData */
 /* global sunflowerMapPointsTopics */
 /**
  * Retrieves the translation of text.
@@ -20,6 +21,7 @@ import {
 	RangeControl,
 	PanelBody,
 	TextControl,
+	SelectControl,
 	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
 import { useLayoutEffect, useEffect, useRef } from '@wordpress/element';
@@ -36,13 +38,14 @@ import { useLayoutEffect, useEffect, useRef } from '@wordpress/element';
  * @return {Element} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { lat, lng, zoom, height, mailTo, topics } = attributes;
+	const { lat, lng, zoom, height, mailTo, topics, showMarker } = attributes;
 	const mapContainerRef = useRef( null );
 	const leafletMapRef = useRef( null );
 	const blockProps = useBlockProps( {
 		className: 'row',
 	} );
 	const allTopics = sunflowerMapPointsTopics || [];
+	const clusterGroupRef = useRef( null );
 
 	const toggleTopic = ( value ) => {
 		if ( topics.includes( value ) ) {
@@ -63,6 +66,29 @@ export default function Edit( { attributes, setAttributes } ) {
 	const onChangeMailTo = ( input ) => {
 		setAttributes( { mailTo: input === undefined ? '' : input } );
 	};
+
+	const onChangeShowMarkerSelect = ( input ) => {
+		setAttributes( { showMarker: input === undefined ? 'none' : input } );
+	};
+
+	function getIcon( label ) {
+		// Standard-Icon, falls nichts gefunden wird
+		let iconClass = 'fa-solid fa-map-marker';
+
+		const topic = sunflowerMapPointsTopics.find(
+			( t ) => t.label === label
+		);
+		if ( topic && topic.icon ) {
+			iconClass = `fa-solid ${ topic.icon }`;
+		}
+
+		return L.divIcon( {
+			html: `<i class="${ iconClass } fa-2x"></i>`,
+			className: 'custom-fa-icon',
+			iconSize: [ 30, 30 ],
+			iconAnchor: [ 15, 30 ],
+		} );
+	}
 
 	useLayoutEffect( () => {
 		if ( typeof L === 'undefined' ) {
@@ -190,7 +216,39 @@ export default function Edit( { attributes, setAttributes } ) {
 		} );
 
 		leafletMapRef.current = map;
-	}, [ attributes.lat, attributes.lng, attributes.zoom, setAttributes ] );
+	}, [
+		attributes.lat,
+		attributes.lng,
+		attributes.zoom,
+		attributes.showMarker,
+		setAttributes,
+	] );
+
+	useLayoutEffect( () => {
+		const map = leafletMapRef.current;
+
+		clusterGroupRef.current?.clearLayers();
+
+		if (
+			attributes.showMarker === 'front-and-backend' ||
+			attributes.showMarker === 'backend'
+		) {
+			const clusterGroup = L.markerClusterGroup();
+
+			sunflowerMapData.pois.forEach( ( poi ) => {
+				if ( poi.lat && poi.lng ) {
+					const marker = L.marker( [ poi.lat, poi.lng ], {
+						icon: getIcon( poi.topic ),
+					} );
+					marker.bindPopup( `${ poi.topic }` );
+					clusterGroup.addLayer( marker );
+				}
+			} );
+
+			map.addLayer( clusterGroup );
+			clusterGroupRef.current = clusterGroup;
+		}
+	}, [ attributes.showMarker ] );
 
 	useEffect( () => {
 		const map = leafletMapRef.current;
@@ -277,6 +335,38 @@ export default function Edit( { attributes, setAttributes } ) {
 								min={ 100 }
 								max={ 1000 }
 							/>
+							<SelectControl
+								label={ __(
+									'Show marker on map',
+									'sunflower-map-points-map'
+								) }
+								value={ showMarker }
+								options={ [
+									{
+										value: 'backend',
+										label: __(
+											'Backend',
+											'sunflower-map-points-map'
+										),
+									},
+									{
+										value: 'noshow',
+										label: __(
+											'Do not show',
+											'sunflower-map-points-map'
+										),
+									},
+									{
+										value: 'front-and-backend',
+										label: __(
+											'Front- & Backend',
+											'sunflower-map-points-map'
+										),
+									},
+								] }
+								onChange={ onChangeShowMarkerSelect }
+							/>
+
 							<TextControl
 								label={ __(
 									'Mail To',
