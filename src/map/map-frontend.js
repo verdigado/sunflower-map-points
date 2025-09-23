@@ -1,7 +1,6 @@
 /* global L */
 /* global MutationObserver */
 /* global sunflowerMapPoints */
-/* global sunflowerMapData */
 /* global sunflowerMapPointsTopics */
 /* global bootstrap */
 
@@ -146,18 +145,39 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 			if ( showMarker === 'front-and-backend' ) {
 				const clusterGroup = L.markerClusterGroup();
-
-				sunflowerMapData.pois.forEach( ( poi ) => {
-					if ( poi.lat && poi.lng ) {
-						const marker = L.marker( [ poi.lat, poi.lng ], {
-							icon: getIcon( poi.topic ),
-						} );
-						marker.bindPopup( `${ poi.topic }` );
-						clusterGroup.addLayer( marker );
-					}
-				} );
-
 				map.addLayer( clusterGroup );
+
+				function loadMarkers() {
+					const bounds = map.getBounds();
+					const url =
+						`/wp-json/sunflower-map/v1/pois?` +
+						`north=${ bounds.getNorth() }&south=${ bounds.getSouth() }&east=${ bounds.getEast() }&west=${ bounds.getWest() }`;
+
+					fetch( url )
+						.then( ( res ) => res.json() )
+						.then( ( data ) => {
+							clusterGroup.clearLayers();
+							data.forEach( ( poi ) => {
+								if ( poi.lat && poi.lng ) {
+									const marker = L.marker(
+										[ poi.lat, poi.lng ],
+										{
+											icon: getIcon( poi.topic ),
+										}
+									);
+									marker.bindPopup(
+										`<strong>${ poi.topic }</strong><br><i>${ poi.message }</i>`
+									);
+									clusterGroup.addLayer( marker );
+								}
+							} );
+						} );
+				}
+
+				loadMarkers();
+
+				// Reload markers after every move.
+				map.on( 'moveend', loadMarkers );
 			}
 
 			map.on( 'click', function ( e ) {

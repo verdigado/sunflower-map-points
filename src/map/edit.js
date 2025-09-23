@@ -226,7 +226,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	useLayoutEffect( () => {
 		const map = leafletMapRef.current;
-		// evtl. vorher Marker entfernen, damit sich nichts doppelt
+
 		clusterGroupRef.current?.clearLayers();
 
 		if (
@@ -246,7 +246,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			} );
 
 			map.addLayer( clusterGroup );
-			clusterGroupRef.current = clusterGroup; // merken für späteres Entfernen
+			clusterGroupRef.current = clusterGroup;
 		}
 	}, [ attributes.showMarker ] );
 
