@@ -34,23 +34,3 @@ add_filter(
 		return $post_types;
 	}
 );
-
-add_action(
-	'enqueue_block_editor_assets',
-	function () {
-
-		$options = get_option( 'sunflower_map_points_topics_options' );
-
-		$default_topics = '[{"label":"Sonstiges","icon":"fa-circle-question"}]';
-
-		$topics_json = ( isset( $options['sunflower_map_points_topics_items'] ) && ! empty( $options['sunflower_map_points_topics_items'] ) ) ? $options['sunflower_map_points_topics_items'] : $default_topics;
-
-		$topics = json_decode( $topics_json, true );
-
-		wp_localize_script(
-			'sunflower-map-points-map-script',
-			'sunflowerMapPointsTopics',
-			$topics
-		);
-	}
-);

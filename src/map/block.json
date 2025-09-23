@@ -26,18 +26,22 @@
     },
     "mailTo": {
       "type": "string",
-			"default": ""
+		"default": ""
 	},
   	"topics": {
     	"type": "array",
     	"default": [ "Sonstiges", "Baum", "Bank", "Abfalleimer", "Trinkbrunnen" ]
+	},
+	"showMarker": {
+		"type":"string",
+		"default": "backend"
   	}
   },
   "supports": {
     "html": false
   },
   "editorScript": ["file:./index.js"],
-  "script": ["file:./map-frontend.js", "sunflower-leaflet"],
-  "style": ["file:./style-index.css", "sunflower-leaflet", "fontawesome6"],
+  "script": ["file:./map-frontend.js", "sunflower-leaflet", "sunflower-leaflet-markercluster"],
+  "style": ["file:./style-index.css", "sunflower-leaflet", "sunflower-leaflet-markercluster", "fontawesome6"],
   "render": "file:./render.php"
 }

@@ -46,15 +46,52 @@ function sunflower_map_points_enqueue_styles() {
 
 	if ( isset( $post ) && has_block( 'sunflower-map-points/map', $post ) ) {
 
+		$pois  = array();
+		$posts = get_posts(
+			array(
+				'post_type'      => 'custompoi',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+			)
+		);
+
+		foreach ( $posts as $spost ) {
+			$pois[] = array(
+				'id'    => $spost->ID,
+				'lat'   => get_post_meta( $spost->ID, 'lat', true ),
+				'lng'   => get_post_meta( $spost->ID, 'lng', true ),
+				'topic' => get_post_meta( $spost->ID, 'topic', true ),
+			);
+		}
+
+		wp_localize_script(
+			'sunflower-map-points-map-script',
+			'sunflowerMapData',
+			array(
+				'pois' => $pois,
+			)
+		);
+
 		wp_localize_script(
 			'sunflower-map-points-map-script',
 			'sunflowerMapPoints',
 			array(
 				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
 				'maps_marker' => plugin_dir_url( __FILE__ ) . 'assets/img/marker.png',
-
 			)
 		);
+
+		$options        = get_option( 'sunflower_map_points_topics_options' );
+		$default_topics = '[{"label":"Sonstiges","icon":"fa-circle-question"}]';
+		$topics_json    = ( isset( $options['sunflower_map_points_topics_items'] ) && ! empty( $options['sunflower_map_points_topics_items'] ) ) ? $options['sunflower_map_points_topics_items'] : $default_topics;
+		$topics         = json_decode( $topics_json, true );
+
+		wp_localize_script(
+			'sunflower-map-points-map-script',
+			'sunflowerMapPointsTopics',
+			$topics
+		);
+
 	}
 }
 add_action( 'wp_enqueue_scripts', 'sunflower_map_points_enqueue_styles' );
@@ -163,10 +200,27 @@ function sunflower_map_points_blocks_init() {
 		true
 	);
 
+	// Register leaflet library.
+	wp_register_script(
+		'sunflower-leaflet-markercluster',
+		plugin_dir_url( __FILE__ ) . 'assets/vndr/leaflet.markercluster/dist/leaflet.markercluster.js',
+		array(),
+		SUNFLOWER_MAP_POINTS_VERSION,
+		true
+	);
+
 	// Register leaflet styles.
 	wp_register_style(
 		'sunflower-leaflet',
 		plugin_dir_url( __FILE__ ) . 'assets/vndr/leaflet/dist/leaflet.css',
+		array(),
+		SUNFLOWER_MAP_POINTS_VERSION
+	);
+
+	// Register leaflet styles.
+	wp_register_style(
+		'sunflower-leaflet-markercluster',
+		plugin_dir_url( __FILE__ ) . 'assets/vndr/leaflet.markercluster/dist/MarkerCluster.Default.css',
 		array(),
 		SUNFLOWER_MAP_POINTS_VERSION
 	);

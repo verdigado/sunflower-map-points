@@ -1,6 +1,8 @@
 /* global L */
 /* global MutationObserver */
 /* global sunflowerMapPoints */
+/* global sunflowerMapData */
+/* global sunflowerMapPointsTopics */
 /* global bootstrap */
 
 /**
@@ -12,6 +14,25 @@ import { __ } from '@wordpress/i18n';
 
 document.addEventListener( 'DOMContentLoaded', () => {
 	const observer = new MutationObserver( () => {
+		function getIcon( label ) {
+			// Standard-Icon, falls nichts gefunden wird
+			let iconClass = 'fa-solid fa-map-marker';
+
+			const topic = sunflowerMapPointsTopics.find(
+				( t ) => t.label === label
+			);
+			if ( topic && topic.icon ) {
+				iconClass = `fa-solid ${ topic.icon }`;
+			}
+
+			return L.divIcon( {
+				html: `<i class="${ iconClass } fa-2x"></i>`,
+				className: 'custom-fa-icon',
+				iconSize: [ 30, 30 ],
+				iconAnchor: [ 15, 30 ],
+			} );
+		}
+
 		document.querySelectorAll( '.map-container' ).forEach( ( el ) => {
 			if ( typeof L === 'undefined' ) {
 				// eslint-disable-next-line no-console
@@ -34,6 +55,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			const initLat = parseFloat( el.dataset.lat );
 			const initLng = parseFloat( el.dataset.lng );
 			const initZoom = parseInt( el.dataset.zoom, 10 );
+			const showMarker = el.dataset.showMarker;
 
 			const map = L.map( mapEl, {
 				scrollWheelZoom: true,
@@ -121,6 +143,22 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 			let lastLat = null;
 			let lastLng = null;
+
+			if ( showMarker === 'front-and-backend' ) {
+				const clusterGroup = L.markerClusterGroup();
+
+				sunflowerMapData.pois.forEach( ( poi ) => {
+					if ( poi.lat && poi.lng ) {
+						const marker = L.marker( [ poi.lat, poi.lng ], {
+							icon: getIcon( poi.topic ),
+						} );
+						marker.bindPopup( `${ poi.topic }` );
+						clusterGroup.addLayer( marker );
+					}
+				} );
+
+				map.addLayer( clusterGroup );
+			}
 
 			map.on( 'click', function ( e ) {
 				lastLat = e.latlng.lat.toFixed( 6 );

@@ -12,14 +12,6 @@
       "type": "string",
       "default": ""
     },
-    "labelBefore": {
-      "type": "string",
-      "default": "Hinweise seit"
-    },
-    "labelAfter": {
-      "type": "string",
-      "default": "eingegangen"
-    },
     "text": {
       "type": "string",
       "default": "💚 Es sind %%COUNT%% Hinweise seit %%DATE%% eingegangen!"

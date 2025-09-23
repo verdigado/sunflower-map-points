@@ -23,8 +23,8 @@
     "@wordpress/i18n": "^5.25.0",
     "@wordpress/scripts": "^30.18.0",
     "@wordpress/stylelint-config": "^23.17.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
     "dir-archiver": "^2.1.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
     "sass": "^1.77.8"
   },
   "scripts": {
@@ -33,7 +33,7 @@
     "lint:scss": "wp-scripts lint-style 'sass/**/*.scss' 'src/**/*.scss'",
     "lint:js": "wp-scripts lint-js 'src/**/*.js'",
     "lint:jsa": "wp-scripts lint-js",
-    "copy-node-modules": "copyfiles -u 1 node_modules/bootstrap/dist/js/*.min.js node_modules/@fortawesome/fontawesome-free/webfonts/* node_modules/fork-awesome/fonts/* node_modules/leaflet/dist/*.js node_modules/leaflet/dist/*.css node_modules/leaflet/dist/images/* assets/vndr",
+    "copy-node-modules": "copyfiles -u 1 node_modules/bootstrap/dist/js/*.min.js node_modules/@fortawesome/fontawesome-free/webfonts/* node_modules/fork-awesome/fonts/* node_modules/leaflet/dist/*.js node_modules/leaflet/dist/*.css node_modules/leaflet/dist/images/* node_modules/leaflet.markercluster/dist/*.js node_modules/leaflet.markercluster/dist/*.css assets/vndr",
     "bundle": "npm run copy-node-modules && cd ../ && dir-archiver --src sunflower-map-points --dest sunflower-map-points.zip --includebasedir true --exclude Makefile create-changelog.php changelog.html documentation mkdocs .DS_Store .stylelintrc.json .eslintrc .git .gitattributes .github .gitignore README.md composer.json composer.lock node_modules vendor package-lock.json package.json .travis.yml phpcs.xml.dist sass style.css.map .favorites.json",
     "build": "wp-scripts build",
     "start": "wp-scripts start",
@@ -43,6 +43,7 @@
   "dependencies": {
     "copyfiles": "^2.4.1",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "pa11y": "^8.0"
   },
   "overrides": {
