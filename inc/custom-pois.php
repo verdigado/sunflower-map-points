@@ -87,3 +87,21 @@ function sunflower_map_get_pois( WP_REST_Request $request ) {
 
 	return rest_ensure_response( $results );
 }
+
+/**
+ * Get the default topics as JSON string.
+ *
+ * @return string JSON string of default topics.
+ */
+function sunflower_map_points_get_default_topics_json() {
+
+	$default_topics_json = '[
+		{"icon":"fa-circle-question","label":"Sonstiges"},
+		{"icon":"fa-bicycle","label":"Fahrradständer"},
+		{"icon":"fa-tree","label":"Baum"},
+		{"icon":"fa-chair","label":"Bank"},
+		{"icon":"fa-trash","label":"Abfalleimer"},
+		{"icon":"fa-faucet","label":"Trinkbrunnen"}
+	]';
+	return $default_topics_json;
+}
