@@ -44,33 +44,7 @@ require_once 'inc/class-sunflowermappointssettingspage.php';
 function sunflower_map_points_enqueue_styles() {
 	global $post;
 
-	if ( isset( $post ) && has_block( 'sunflower-map-points/map', $post ) ) {
-
-		$pois  = array();
-		$posts = get_posts(
-			array(
-				'post_type'      => 'custompoi',
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-			)
-		);
-
-		foreach ( $posts as $spost ) {
-			$pois[] = array(
-				'id'    => $spost->ID,
-				'lat'   => get_post_meta( $spost->ID, 'lat', true ),
-				'lng'   => get_post_meta( $spost->ID, 'lng', true ),
-				'topic' => get_post_meta( $spost->ID, 'topic', true ),
-			);
-		}
-
-		wp_localize_script(
-			'sunflower-map-points-map-script',
-			'sunflowerMapData',
-			array(
-				'pois' => $pois,
-			)
-		);
+	if ( isset( $post ) && ( has_block( 'sunflower-map-points/map', $post ) || is_admin() ) ) {
 
 		wp_localize_script(
 			'sunflower-map-points-map-script',

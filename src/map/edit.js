@@ -1,6 +1,5 @@
 /* global L */
 /* global sunflowerMapPoints */
-/* global sunflowerMapData */
 /* global sunflowerMapPointsTopics */
 /**
  * Retrieves the translation of text.
@@ -44,7 +43,10 @@ export default function Edit( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps( {
 		className: 'row',
 	} );
-	const allTopics = sunflowerMapPointsTopics || [];
+	const allTopics =
+		typeof sunflowerMapPointsTopics !== 'undefined'
+			? sunflowerMapPointsTopics
+			: [];
 	const clusterGroupRef = useRef( null );
 
 	const toggleTopic = ( value ) => {
@@ -230,23 +232,42 @@ export default function Edit( { attributes, setAttributes } ) {
 		clusterGroupRef.current?.clearLayers();
 
 		if (
-			attributes.showMarker === 'front-and-backend' ||
-			attributes.showMarker === 'backend'
+			( attributes.showMarker === 'front-and-backend' ||
+				attributes.showMarker === 'backend' ) &&
+			typeof sunflowerMapPointsTopics !== 'undefined'
 		) {
 			const clusterGroup = L.markerClusterGroup();
-
-			sunflowerMapData.pois.forEach( ( poi ) => {
-				if ( poi.lat && poi.lng ) {
-					const marker = L.marker( [ poi.lat, poi.lng ], {
-						icon: getIcon( poi.topic ),
-					} );
-					marker.bindPopup( `${ poi.topic }` );
-					clusterGroup.addLayer( marker );
-				}
-			} );
-
 			map.addLayer( clusterGroup );
 			clusterGroupRef.current = clusterGroup;
+
+			function loadMarkers() {
+				const bounds = map.getBounds();
+				const url =
+					`/wp-json/sunflower-map/v1/pois?` +
+					`north=${ bounds.getNorth() }&south=${ bounds.getSouth() }&east=${ bounds.getEast() }&west=${ bounds.getWest() }`;
+
+				fetch( url )
+					.then( ( res ) => res.json() )
+					.then( ( data ) => {
+						clusterGroup.clearLayers();
+						data.forEach( ( poi ) => {
+							if ( poi.lat && poi.lng ) {
+								const marker = L.marker( [ poi.lat, poi.lng ], {
+									icon: getIcon( poi.topic ),
+								} );
+								marker.bindPopup(
+									`<strong>${ poi.topic }</strong><br><i>${ poi.message }</i>`
+								);
+								clusterGroup.addLayer( marker );
+							}
+						} );
+					} );
+			}
+
+			loadMarkers();
+
+			// Reload markers after every move.
+			map.on( 'moveend', loadMarkers );
 		}
 	}, [ attributes.showMarker ] );
 
