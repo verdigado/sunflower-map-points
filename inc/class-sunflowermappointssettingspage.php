@@ -82,28 +82,27 @@ class SunflowerMapPointsSettingsPage {
 
 		// Sanitize everything element of the input array.
 		foreach ( $input as $key => $value ) {
-			if ( isset( $input[ $key ] ) ) {
-				$new_input[ $key ] = sanitize_text_field( $value );
-			}
-		}
+			if ( isset( $input[ $key ] ) && empty( $new_input[ $key ] ?? false ) ) {
 
-		// Sanitize special values.
-		if ( isset( $input['sunflower_map_points_topics_items'] ) ) {
+				if ( 'sunflower_map_points_topics_items' === $key ) {
+					$lines  = array_filter( array_map( 'trim', explode( "\n", $input['sunflower_map_points_topics_items'] ) ) );
+					$topics = array();
 
-			$lines  = array_filter( array_map( 'trim', explode( "\n", $input['sunflower_map_points_topics_items'] ) ) );
-			$topics = array();
+					foreach ( $lines as $line ) {
+						$parts = array_map( 'trim', explode( ';', $line ) );
+						if ( ! empty( $parts[0] ) && ! empty( $parts[1] ) ) {
+							$topics[] = array(
+								'icon'  => $parts[0] ?? '',
+								'label' => $parts[1] ?? '',
+							);
+						}
+					}
 
-			foreach ( $lines as $line ) {
-				$parts = array_map( 'trim', explode( ';', $line ) );
-				if ( ! empty( $parts[0] ) ) {
-					$topics[] = array(
-						'icon'  => $parts[0] ?? '',
-						'label' => $parts[1] ?? '',
-					);
+					$new_input['sunflower_map_points_topics_items'] = wp_json_encode( $topics, JSON_UNESCAPED_UNICODE );
+				} else {
+					$new_input[ $key ] = sanitize_text_field( $value );
 				}
 			}
-
-			$new_input['sunflower_map_points_topics_items'] = wp_json_encode( $topics, JSON_UNESCAPED_UNICODE );
 		}
 
 		return $new_input;
@@ -114,24 +113,17 @@ class SunflowerMapPointsSettingsPage {
 	 */
 	public function sunflower_map_points_settings_page(): void {
 
-		$default_topics   = array();
-		$default_topics[] = 'fa-circle-question;Sonstiges';
-		$default_topics[] = 'fa-bicycle;Fahrradständer';
-		$default_topics[] = 'fa-tree;Baum';
-		$default_topics[] = 'fa-chair;Bank';
-		$default_topics[] = 'fa-trash;Abfalleimer';
-		$default_topics[] = 'fa-faucet;Trinkbrunnen';
+		$default_topics_json = sunflower_map_points_get_default_topics_json();
 
 		$topics = ( isset( $this->options['sunflower_map_points_topics_items'] ) && ! empty( $this->options['sunflower_map_points_topics_items'] ) ) ? json_decode( $this->options['sunflower_map_points_topics_items'], true ) : '';
 
 		// Convert json to csv.
 		$lines = array();
-		if ( is_array( $topics ) && ! empty( $topics ) ) {
-			foreach ( $topics as $t ) {
-				$lines[] = $t['icon'] . ';' . $t['label'];
-			}
-		} else {
-			$lines = $default_topics;
+		if ( ! is_array( $topics ) || empty( $topics ) ) {
+			$topics = json_decode( $default_topics_json, true );
+		}
+		foreach ( $topics as $t ) {
+			$lines[] = $t['icon'] . ';' . $t['label'];
 		}
 		$topics_textarea = implode( "\n", $lines );
 
@@ -162,5 +154,5 @@ class SunflowerMapPointsSettingsPage {
 	}
 }
 if ( is_admin() ) {
-	$sunflower_map_points_settings_page_moep = new SunflowerMapPointsSettingsPage();
+	$sunflower_map_points_settings_page = new SunflowerMapPointsSettingsPage();
 }

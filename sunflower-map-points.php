@@ -56,7 +56,7 @@ function sunflower_map_points_enqueue_styles() {
 		);
 
 		$options        = get_option( 'sunflower_map_points_topics_options' );
-		$default_topics = '[{"label":"Sonstiges","icon":"fa-circle-question"}]';
+		$default_topics = sunflower_map_points_get_default_topics_json();
 		$topics_json    = ( isset( $options['sunflower_map_points_topics_items'] ) && ! empty( $options['sunflower_map_points_topics_items'] ) ) ? $options['sunflower_map_points_topics_items'] : $default_topics;
 		$topics         = json_decode( $topics_json, true );
 
