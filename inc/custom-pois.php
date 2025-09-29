@@ -12,16 +12,16 @@ function sunflower_map_points_registercustompoi_post_type() {
 	register_post_type(
 		'custompoi',
 		array(
-			'labels'              => array(
+			'labels'       => array(
 				'name'          => 'Kartenmeldungen',
 				'singular_name' => 'Kartenmeldung',
 			),
-			'public'              => true,
-			'exclude_from_search' => true,
-			'has_archive'         => false,
-			'show_in_menu'        => true,
-			'supports'            => array( 'title', 'custom-fields' ),
-			'menu_icon'           => 'dashicons-location-alt',
+			'public'       => false,
+			'has_archive'  => false,
+			'show_ui'      => true,
+			'show_in_menu' => true,
+			'supports'     => array( 'title', 'custom-fields' ),
+			'menu_icon'    => 'dashicons-location-alt',
 		)
 	);
 }
