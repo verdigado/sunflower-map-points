@@ -1,6 +1,5 @@
 {
   "name": "sunflower-map-points",
-  "version": "1.1.0",
   "description": "Sunflower Plugin showing POIs on a map and accepting hints.",
   "author": "verdigado eG",
   "license": "GPL-2.0-or-later",
