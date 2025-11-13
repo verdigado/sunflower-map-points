@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Sunflower Map Points 1.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sunflower-map-"
 "points\n"
-"POT-Creation-Date: 2025-09-16T08:37:15+02:00\n"
-"PO-Revision-Date: 2025-09-16 08:40+0200\n"
+"POT-Creation-Date: 2025-11-13T21:02:03+01:00\n"
+"PO-Revision-Date: 2025-11-13 21:03+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -37,8 +37,57 @@ msgstr "Plugin zum Sammeln von Hinweisen über eine Karte."
 msgid "verdigado eG, Alexander Bigga"
 msgstr ""
 
+#: build/map/render.php:27 src/map/render.php:27
+msgid "Report an issue"
+msgstr "Hinweis geben"
+
+#: build/map/render.php:28 src/map/render.php:28
+msgid "Close"
+msgstr "Schließen"
+
+#: build/map/render.php:51 src/map/render.php:51
+msgid "Name"
+msgstr "Name"
+
+#: build/map/render.php:57 src/map/render.php:57
+msgid "This information will <strong>not be published</strong>."
+msgstr "Diese Information wird <strong>nicht veröffentlicht</strong>."
+
+#: build/map/render.php:67 src/map/render.php:67
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: build/map/render.php:73 src/map/render.php:73
+msgid ""
+"Used only for follow-up questions and feedback. Will <strong>not be "
+"published</strong>."
+msgstr ""
+"Ermöglicht Rückfragen und eine Rückmeldung. Wird <strong>nicht "
+"veröffentlicht</strong>."
+
+#: build/map/render.php:83 inc/export-csv.php:53 src/map/render.php:83
+msgid "Phone"
+msgstr "Telefon"
+
+#: build/map/render.php:89 src/map/render.php:89
+msgid "Optional, helps with inquiries. Will <strong>not be published</strong>."
+msgstr ""
+"Optional, hilft bei Rückfragen. Wird <strong>nicht veröffentlicht</strong>."
+
+#: build/map/render.php:99 src/map/render.php:99
+msgid "Topic"
+msgstr "Thema"
+
+#: build/map/render.php:110 src/map/render.php:110
+msgid "Hint"
+msgstr "Hinweis"
+
+#: build/map/render.php:114 src/map/render.php:114
+msgid "Send"
+msgstr "Senden"
+
 #: inc/class-sunflowermappointssettingspage.php:35
-#: inc/class-sunflowermappointssettingspage.php:140
+#: inc/class-sunflowermappointssettingspage.php:132
 msgid "Sunflower Map Points Settings"
 msgstr "Sunflower Kartenhinweise Einstellungen"
 
@@ -54,11 +103,11 @@ msgstr "Verfügbare Themen in den Formularen"
 msgid "Topics"
 msgstr "Themen"
 
-#: inc/class-sunflowermappointssettingspage.php:146
+#: inc/class-sunflowermappointssettingspage.php:138
 msgid "Definiere hier die verfügbaren Themen und Icons (FontAwesome-Klassen)."
 msgstr ""
 
-#: inc/class-sunflowermappointssettingspage.php:157
+#: inc/class-sunflowermappointssettingspage.php:149
 msgid "Beispiel-Eintrag:"
 msgstr ""
 
@@ -79,14 +128,10 @@ msgid "Date"
 msgstr "Datum"
 
 #: inc/export-csv.php:53
-msgid "Phone"
-msgstr "Telefon"
-
-#: inc/export-csv.php:53
 msgid "Note"
 msgstr "Hinweis"
 
-#: build/map/index.js:283 src/map/edit.js:299 build/map/index.js:299
+#: build/map/index.js:347 src/map/edit.js:410 build/map/index.js:410
 msgid "Formular-Einstellungen"
 msgstr ""
 
