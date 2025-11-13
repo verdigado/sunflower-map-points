@@ -86,6 +86,8 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
+				<element value="sunflower-map-points-counter"/>
+				<element value="sunflower-map-points-map"/>
 				<element value="sunflower-map-points"/>
 				<element value="sunflower"/>
 				<element value="default"/>
