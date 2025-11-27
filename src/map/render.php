@@ -9,12 +9,27 @@ $sunflower_map_points_mailto = $attributes['mailTo'] ?? '';
 
 if ( isset( $attributes['lat'] ) && ! empty( $attributes['lat'] ) ) {
 
+	$sunflower_map_points_area_data = array();
+
+	foreach ( $attributes['areas'] as $sunflower_map_points_id ) {
+		$sunflower_map_points_url = wp_get_attachment_url( $sunflower_map_points_id );
+
+		if ( $sunflower_map_points_url ) {
+			$sunflower_map_points_area_data[] = array(
+				'id'    => $sunflower_map_points_id,
+				'url'   => $sunflower_map_points_url,
+				'title' => get_the_title( $sunflower_map_points_id ),
+			);
+		}
+	}
+
 	printf(
-		'<div class="map-container" data-lat="%s" data-lng="%s" data-zoom="%s" data-show-marker="%s">',
+		'<div class="map-container" data-lat="%s" data-lng="%s" data-zoom="%s" data-show-marker="%s" data-areas="%s">',
 		esc_attr( $attributes['lat'] ),
 		esc_attr( $attributes['lng'] ),
 		esc_attr( $attributes['zoom'] ),
-		esc_attr( $attributes['showMarker'] )
+		esc_attr( $attributes['showMarker'] ),
+		esc_attr( wp_json_encode( $sunflower_map_points_area_data ) )
 	);
 
 	printf( '<div id="map" style="height: %spx;"></div></div>', esc_attr( $attributes['height'] ) );
@@ -31,6 +46,7 @@ if ( isset( $attributes['lat'] ) && ! empty( $attributes['lat'] ) ) {
 
 				<div class="position-relative mb-3">
 					<div id="mini-map" style="height: 150px; width: 100%; border-radius: 0.5rem;"></div>
+					<p><?php esc_attr_e( 'Area', 'sunflower-map-points' ); ?>: <span id="area"></span></p>
 				</div>
 
 				<form id="leaflet-form">
@@ -38,6 +54,7 @@ if ( isset( $attributes['lat'] ) && ! empty( $attributes['lat'] ) ) {
 					<input type="hidden" name="action" value="send_leaflet_form">
 					<input type="hidden" id="form-lat" name="lat">
 					<input type="hidden" id="form-lng" name="lng">
+					<input type="hidden" id="form-area" name="area">
 					<input type="hidden" name="mailTo" value="
 						<?php
 							echo esc_attr(

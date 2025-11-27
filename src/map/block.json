@@ -35,13 +35,17 @@
 	"showMarker": {
 		"type":"string",
 		"default": "backend"
-  	}
+  	},
+	"areas": {
+        "type": "array",
+        "default": "[]"
+    }
   },
   "supports": {
     "html": false
   },
   "editorScript": ["file:./index.js"],
-  "script": ["file:./map-frontend.js", "sunflower-leaflet", "sunflower-leaflet-markercluster"],
+  "script": ["file:./map-frontend.js", "sunflower-leaflet", "sunflower-leaflet-markercluster", "sunflower-leaflet-pip"],
   "style": ["file:./style-index.css", "sunflower-leaflet", "sunflower-leaflet-markercluster", "fontawesome6"],
   "render": "file:./render.php"
 }

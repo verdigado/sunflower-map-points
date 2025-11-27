@@ -1,4 +1,6 @@
+/* global wp */
 /* global L */
+/* global leafletPip */
 /* global sunflowerMapPoints */
 /* global sunflowerMapPointsTopics */
 /**
@@ -17,13 +19,24 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 
 import {
+	Button,
 	RangeControl,
 	PanelBody,
 	TextControl,
 	SelectControl,
 	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
-import { useLayoutEffect, useEffect, useRef } from '@wordpress/element';
+
+import { store as coreStore } from '@wordpress/core-data';
+import { useSelect } from '@wordpress/data';
+import {
+	useLayoutEffect,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -38,6 +51,11 @@ import { useLayoutEffect, useEffect, useRef } from '@wordpress/element';
  */
 export default function Edit( { attributes, setAttributes } ) {
 	const { lat, lng, zoom, height, mailTo, topics, showMarker } = attributes;
+
+	const areas = useMemo( () => {
+		return Array.isArray( attributes.areas ) ? attributes.areas : [];
+	}, [ attributes.areas ] );
+
 	const mapContainerRef = useRef( null );
 	const leafletMapRef = useRef( null );
 	const blockProps = useBlockProps( {
@@ -48,6 +66,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			? sunflowerMapPointsTopics
 			: [];
 	const clusterGroupRef = useRef( null );
+	const [ allowedLayers, setAllowedLayers ] = useState( [] );
 
 	const toggleTopic = ( value ) => {
 		if ( topics.includes( value ) ) {
@@ -72,6 +91,12 @@ export default function Edit( { attributes, setAttributes } ) {
 	const onChangeShowMarkerSelect = ( input ) => {
 		setAttributes( { showMarker: input === undefined ? 'none' : input } );
 	};
+
+	const allowedAreas = useSelect(
+		( select ) =>
+			( areas || [] ).map( ( id ) => select( coreStore ).getMedia( id ) ),
+		[ areas ]
+	);
 
 	function getIcon( label ) {
 		// Standard-Icon, falls nichts gefunden wird
@@ -227,6 +252,67 @@ export default function Edit( { attributes, setAttributes } ) {
 	] );
 
 	useLayoutEffect( () => {
+		if ( ! allowedAreas || allowedAreas.length === 0 ) {
+			return;
+		}
+
+		async function loadLayers() {
+			const map = leafletMapRef.current;
+			if ( ! map ) {
+				return;
+			}
+
+			const newLayers = [];
+
+			function approximateLayerArea( layer ) {
+				const bounds = layer.getBounds();
+
+				const north = bounds.getNorth();
+				const south = bounds.getSouth();
+				const east = bounds.getEast();
+				const west = bounds.getWest();
+
+				const layerHeight = Math.abs( north - south ) * 100;
+				const layerWidth = Math.abs( east - west ) * 100;
+
+				return layerWidth * layerHeight;
+			}
+
+			for ( const file of allowedAreas ) {
+				if ( ! file || ! file.source_url ) {
+					continue;
+				}
+
+				try {
+					const res = await fetch( file.source_url );
+					const json = await res.json();
+
+					const layer = L.geoJSON( json, {
+						style: {
+							color: '#005437ff',
+							weight: 2,
+							fillColor: '#148f435b',
+							fillOpacity: 0.15,
+						},
+					} ).addTo( map );
+
+					layer.areaName = file.title;
+					layer.sortIndex = approximateLayerArea( layer );
+
+					newLayers.push( layer );
+				} catch ( e ) {
+					// eslint-disable-next-line no-console
+					console.error( 'GeoJSON loading failed', e );
+				}
+			}
+
+			setAllowedLayers( newLayers );
+		}
+
+		loadLayers();
+	}, [ allowedAreas ] );
+
+	useLayoutEffect( () => {
 		const map = leafletMapRef.current;
 
 		clusterGroupRef.current?.clearLayers();
@@ -277,6 +363,105 @@ export default function Edit( { attributes, setAttributes } ) {
 			map.setZoom( attributes.zoom );
 		}
 	}, [ attributes.zoom ] );
+
+	const openGeoJsonFrame = () => {
+		const frame = wp.media( {
+			title: 'GeoJSON auswählen',
+			library: {
+				type: [ 'application/json', 'application/geo+json' ],
+			},
+			button: { text: 'Hinzufügen' },
+			multiple: true,
+		} );
+
+		// Vorauswahl aktivieren
+		frame.on( 'open', () => {
+			const selection = frame.state().get( 'selection' );
+			attributes.areas.forEach( ( id ) => {
+				const attachment = wp.media.attachment( id );
+				attachment.fetch();
+				selection.add( attachment );
+			} );
+		} );
+
+		// Auswahl speichern
+		frame.on( 'select', () => {
+			const selection = frame.state().get( 'selection' );
+			const ids = selection.map( ( att ) => att.id );
+			setAttributes( { areas: ids } );
+		} );
+
+		frame.open();
+	};
+
+	async function runReassignment() {
+		const map = leafletMapRef.current;
+
+		if (
+			// eslint-disable-next-line no-alert, no-undef
+			! confirm(
+				'Alle Marker anhand der aktuellen Gebietsflächen neu zuordnen?'
+			)
+		) {
+			return;
+		}
+
+		const pois = [];
+		// 1. Alle POIs holen
+
+		const bounds = map.getBounds();
+		const url =
+			`/wp-json/sunflower-map/v1/pois?` +
+			`north=${ bounds.getNorth() }&south=${ bounds.getSouth() }&east=${ bounds.getEast() }&west=${ bounds.getWest() }`;
+
+		await fetch( url )
+			.then( ( res ) => res.json() )
+			.then( ( data ) => {
+				data.forEach( ( poi ) => {
+					pois.push( poi );
+				} );
+			} );
+
+		const results = [];
+
+		for ( const poi of pois ) {
+			const point = [ poi.lng, poi.lat ];
+
+			const matched = [];
+
+			for ( const layer of allowedLayers ) {
+				const found = leafletPip.pointInLayer( point, layer, true );
+
+				if ( found.length > 0 ) {
+					// Gebietsnamen aus Layer holen
+					const name = layer.areaName || null;
+					if ( name ) {
+						matched.push( {
+							name,
+							sortIndex: layer.sortIndex,
+						} );
+					}
+				}
+			}
+
+			// Sort by index to get always the same order.
+			matched.sort( ( a, b ) => b.sortIndex - a.sortIndex );
+			results.push( {
+				id: poi.ID,
+				area: matched.map( ( m ) => m.name.rendered ).join( ', ' ),
+			} );
+		}
+
+		// 3. Save via REST.
+		await apiFetch( {
+			path: '/sunflower-map/v1/update-poi-areas',
+			method: 'POST',
+			data: { results },
+		} );
+
+		// eslint-disable-next-line no-alert, no-undef
+		alert( 'Gebiete erfolgreich neu zugeordnet.' );
+	}
 
 	return (
 		<div { ...blockProps }>
@@ -405,6 +590,64 @@ export default function Edit( { attributes, setAttributes } ) {
 								type="email"
 								onChange={ onChangeMailTo }
 							/>
+
+							<div>
+								<h3>Erlaubte Gebiete (GeoJSON)</h3>
+								<Button
+									variant="primary"
+									onClick={ openGeoJsonFrame }
+								>
+									GeoJSON-Dateien auswählen
+								</Button>
+								<ul>
+									{ allowedAreas.map( ( file, index ) => {
+										if ( ! file ) {
+											return (
+												<li key={ index }>
+													Lade Datei…
+												</li>
+											);
+										}
+
+										return (
+											<li
+												key={ file.id }
+												style={ {
+													display: 'flex',
+													alignItems: 'center',
+												} }
+											>
+												<span>
+													{ file.title.rendered }
+												</span>
+
+												<Button
+													isDestructive
+													icon="no-alt"
+													onClick={ () => {
+														const updated = [
+															...attributes.areas,
+														];
+														updated.splice(
+															index,
+															1
+														);
+														setAttributes( {
+															areas: updated,
+														} );
+													} }
+												/>
+											</li>
+										);
+									} ) }
+								</ul>
+								<Button
+									variant="secondary"
+									onClick={ runReassignment }
+								>
+									Gebiete neu zuordnen
+								</Button>
+							</div>
 						</PanelBody>
 						<PanelBody
 							title={ __(

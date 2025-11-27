@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sunflower Map Points 1.6.1\n"
+"Project-Id-Version: Sunflower Map Points 1.6.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sunflower-map-points-map\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-13T21:02:06+01:00\n"
+"POT-Creation-Date: 2025-11-24T08:42:07+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sunflower-map-points-map\n"
@@ -35,116 +35,115 @@ msgstr ""
 msgid "verdigado eG, Alexander Bigga"
 msgstr ""
 
-#: build/map/index.js:128
-#: build/map/map-frontend.js:123
-#: build/map/index.js:99
-#: build/map/map-frontend.js:89
+#: build/map/index.js:148
+#: build/map/map-frontend.js:124
+#: build/map/index.js:143
+#: build/map/map-frontend.js:90
 msgid "Leaflet is not available"
 msgstr ""
 
-#: build/map/index.js:151
-#: build/map/map-frontend.js:149
-#: build/map/index.js:130
-#: build/map/map-frontend.js:127
+#: build/map/index.js:171
+#: build/map/map-frontend.js:187
+#: build/map/index.js:174
+#: build/map/map-frontend.js:178
 msgid "Locate me"
 msgstr ""
 
-#: build/map/index.js:175
-#: build/map/map-frontend.js:177
-#: build/map/index.js:157
-#: build/map/map-frontend.js:164
+#: build/map/index.js:195
+#: build/map/map-frontend.js:215
+#: build/map/index.js:201
 msgid "Your are here!"
 msgstr ""
 
-#: build/map/index.js:185
-#: build/map/map-frontend.js:192
-#: build/map/index.js:171
-#: build/map/map-frontend.js:184
+#: build/map/index.js:205
+#: build/map/map-frontend.js:230
+#: build/map/index.js:215
+#: build/map/map-frontend.js:235
 msgid "Your location couldn't be found."
 msgstr ""
 
-#: build/map/index.js:287
-#: build/map/index.js:301
+#: build/map/index.js:339
+#: build/map/index.js:376
 msgid "Map Settings"
 msgstr ""
 
-#: build/map/index.js:290
-#: build/map/index.js:307
+#: build/map/index.js:342
+#: build/map/index.js:382
 msgid "Click into the map and move to the right position. The position and zoom level will be used in the map settings."
 msgstr ""
 
-#: build/map/index.js:292
-#: build/map/index.js:313
+#: build/map/index.js:344
+#: build/map/index.js:388
 msgid "Latitude"
 msgstr ""
 
-#: build/map/index.js:298
-#: build/map/index.js:323
+#: build/map/index.js:350
+#: build/map/index.js:398
 msgid "Longitude"
 msgstr ""
 
-#: build/map/index.js:304
-#: build/map/index.js:333
+#: build/map/index.js:356
+#: build/map/index.js:408
 msgid "Zoom"
 msgstr ""
 
-#: build/map/index.js:312
-#: build/map/index.js:345
+#: build/map/index.js:364
+#: build/map/index.js:420
 msgid "Height"
 msgstr ""
 
-#: build/map/index.js:325
-#: build/map/index.js:360
+#: build/map/index.js:377
+#: build/map/index.js:435
 msgid "Show marker on map"
 msgstr ""
 
-#: build/map/index.js:329
-#: build/map/index.js:368
+#: build/map/index.js:381
+#: build/map/index.js:443
 msgid "Backend"
 msgstr ""
 
-#: build/map/index.js:332
-#: build/map/index.js:375
+#: build/map/index.js:384
+#: build/map/index.js:450
 msgid "Do not show"
 msgstr ""
 
-#: build/map/index.js:335
-#: build/map/index.js:382
+#: build/map/index.js:387
+#: build/map/index.js:457
 msgid "Front- & Backend"
 msgstr ""
 
-#: build/map/index.js:339
-#: build/map/index.js:392
+#: build/map/index.js:391
+#: build/map/index.js:467
 msgid "Mail To"
 msgstr ""
 
-#: build/map/index.js:340
-#: build/map/index.js:396
+#: build/map/index.js:392
+#: build/map/index.js:471
 msgid "Mail form to this address instead of default receiver."
 msgstr ""
 
-#: build/map/index.js:342
-#: build/map/index.js:401
+#: build/map/index.js:394
+#: build/map/index.js:476
 msgid "default receiver"
 msgstr ""
 
-#: build/map/index.js:350
-#: build/map/index.js:416
+#: build/map/index.js:437
+#: build/map/index.js:523
 msgid "The following topics will be available in the hint form."
 msgstr ""
 
-#: build/map/map-frontend.js:252
-#: build/map/map-frontend.js:271
+#: build/map/map-frontend.js:297
+#: build/map/map-frontend.js:332
 msgid "Bootstrap is not available"
 msgstr ""
 
-#: build/map/map-frontend.js:352
-#: build/map/map-frontend.js:416
+#: build/map/map-frontend.js:397
+#: build/map/map-frontend.js:477
 msgid "An error occured!"
 msgstr ""
 
-#: build/map/map-frontend.js:360
-#: build/map/map-frontend.js:431
+#: build/map/map-frontend.js:405
+#: build/map/map-frontend.js:492
 msgid "Error on transmitting the form data."
 msgstr ""
 

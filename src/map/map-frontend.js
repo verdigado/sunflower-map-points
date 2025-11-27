@@ -1,4 +1,5 @@
 /* global L */
+/* global leafletPip */
 /* global MutationObserver */
 /* global sunflowerMapPoints */
 /* global sunflowerMapPointsTopics */
@@ -56,6 +57,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			const initZoom = parseInt( el.dataset.zoom, 10 );
 			const showMarker = el.dataset.showMarker;
 
+			const areas = JSON.parse( el.dataset.areas );
+
 			const map = L.map( mapEl, {
 				scrollWheelZoom: true,
 				dragging: true,
@@ -63,6 +66,65 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			} ).setView( [ initLat, initLng ], initZoom );
 
 			mapEl._leafletMap = map;
+
+			const allowedLayers = [];
+
+			areas.forEach( ( area ) => {
+				fetch( area.url )
+					.then( ( res ) => res.json() )
+					.then( ( json ) => {
+						const layer = L.geoJSON( json, {
+							style: {
+								color: '#005437ff',
+								weight: 2,
+								fillColor: '#148f435b',
+								fillOpacity: 0.15,
+							},
+						} ).addTo( map );
+
+						layer.areaName = area.title;
+						allowedLayers.push( layer );
+					} )
+					.catch( ( err ) =>
+						// eslint-disable-next-line no-console
+						console.error( 'GeoJSON loading failed', err )
+					);
+			} );
+
+			function isInsideAllowedAreas( latlng ) {
+				const point = [ latlng.lng, latlng.lat ];
+
+				const matchedNames = [];
+
+				for ( const layer of allowedLayers ) {
+					// Check if point is in layer.
+					const found = leafletPip.pointInLayer( point, layer, true );
+
+					if ( found.length > 0 ) {
+						const hitLayer = found[ 0 ];
+
+						// Fetch name of layer.
+						const areaName =
+							hitLayer.areaName || layer.areaName || null;
+
+						if ( areaName ) {
+							matchedNames.push( areaName );
+						}
+					}
+				}
+
+				if ( matchedNames.length > 0 ) {
+					return {
+						inside: true,
+						areaName: matchedNames.join( ', ' ),
+					};
+				}
+
+				return {
+					inside: false,
+					areaName: '',
+				};
+			}
 
 			// Custom "Locate Me" Control
 			L.Control.LocateControl = L.Control.extend( {
@@ -181,6 +243,19 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			}
 
 			map.on( 'click', function ( e ) {
+				const isAllowedArea = isInsideAllowedAreas( e.latlng );
+
+				if ( allowedLayers.length > 0 && ! isAllowedArea.inside ) {
+					// eslint-disable-next-line no-alert, no-undef
+					alert(
+						__(
+							'This area is not allowed for hints.',
+							'sunflower-map-points-map'
+						)
+					);
+					return;
+				}
+
 				lastLat = e.latlng.lat.toFixed( 6 );
 				lastLng = e.latlng.lng.toFixed( 6 );
 
@@ -205,6 +280,10 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				// write location to modal form input fields
 				document.querySelector( '#form-lat' ).value = lastLat;
 				document.querySelector( '#form-lng' ).value = lastLng;
+				document.querySelector( '#area' ).textContent =
+					isAllowedArea.areaName;
+				document.querySelector( '#form-area' ).value =
+					isAllowedArea.areaName;
 
 				// show modal
 				if (
