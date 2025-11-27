@@ -50,7 +50,7 @@ function sunflower_map_points_export_pois_as_csv() {
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 
 	$output = fopen( 'php://output', 'w' );
-	fputcsv( $output, array( 'ID', esc_html__( 'Date', 'sunflower-map-points' ), 'Lat', 'Lng', 'Link', 'Typ', 'Name', esc_html__( 'Phone', 'sunflower-map-points' ), 'Email', __( 'Note', 'sunflower-map-points' ) ) );
+	fputcsv( $output, array( 'ID', esc_html__( 'Date', 'sunflower-map-points' ), 'Lat', 'Lng', 'Link', esc_html__( 'Area', 'sunflower-map-points' ), 'Typ', 'Name', esc_html__( 'Phone', 'sunflower-map-points' ), 'Email', __( 'Note', 'sunflower-map-points' ) ) );
 
 	$args = array(
 		'post_type'      => 'custompoi',
@@ -75,6 +75,7 @@ function sunflower_map_points_export_pois_as_csv() {
 				$lat,
 				$lng,
 				$link,
+				get_post_meta( $post->ID, 'area', true ),
 				get_post_meta( $post->ID, 'topic', true ),
 				$post->post_title,
 				get_post_meta( $post->ID, 'phone', true ),

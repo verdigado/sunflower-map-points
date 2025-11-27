@@ -66,6 +66,12 @@ function sunflower_map_points_enqueue_styles() {
 			$topics
 		);
 
+		wp_localize_script(
+			'sunflower-map-points-map-script',
+			'sunflowerMapPointsAreas',
+			$topics
+		);
+
 	}
 }
 add_action( 'wp_enqueue_scripts', 'sunflower_map_points_enqueue_styles' );
@@ -90,6 +96,7 @@ function sunflower_map_points_handle_leaflet_form() {
 	$email   = sanitize_text_field( $_POST['email'] ?? '' );
 	$phone   = sanitize_text_field( $_POST['phone'] ?? '' );
 	$topic   = sanitize_text_field( $_POST['topic'] ?? '' );
+	$area    = sanitize_text_field( $_POST['area'] ?? '' );
 
 	// Set lock to avoid duplicates.
 	$user_ip = $_SERVER['REMOTE_ADDR'];
@@ -128,7 +135,18 @@ function sunflower_map_points_handle_leaflet_form() {
 
 	$subject = "Neue Kartenhinweis von \"$name\"";
 	$link    = "https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=17/$lat/$lng";
-	$body    = "Name: $name\nHinweis: $message\nPosition: $lat, $lng\nKarte: $link\nE-Mail: $email\nTelefon: $phone\nThema: $topic";
+
+	$metadata[] = esc_attr__( 'Name', 'sunflower-map-points' ) . ': ' . $name;
+	$metadata[] = esc_attr__( 'Email', 'sunflower-map-points' ) . ': ' . $email;
+	$metadata[] = esc_attr__( 'Phone', 'sunflower-map-points' ) . ': ' . $phone;
+	$metadata[] = esc_attr__( 'Hint', 'sunflower-map-points' ) . ': ' . $message;
+	$metadata[] = esc_attr__( 'Area', 'sunflower-map-points' ) . ': ' . $area;
+	$metadata[] = esc_attr__( 'Position', 'sunflower-map-points' ) . ': ' . $lat . ', ' . $lng;
+	$metadata[] = esc_attr__( 'Map', 'sunflower-map-points' ) . ': ' . $link;
+	$metadata[] = esc_attr__( 'Topic', 'sunflower-map-points' ) . ': ' . $topic;
+
+	$body = implode( "\n", $metadata );
+
 	$headers = array( 'Content-Type: text/plain; charset=UTF-8' );
 
 	wp_mail( $to, $subject, $body, $headers );
@@ -142,6 +160,7 @@ function sunflower_map_points_handle_leaflet_form() {
 		update_post_meta( $post_id, 'email', $email );
 		update_post_meta( $post_id, 'phone', $phone );
 		update_post_meta( $post_id, 'topic', $topic );
+		update_post_meta( $post_id, 'area', $area );
 
 		wp_send_json(
 			array(
@@ -174,7 +193,16 @@ function sunflower_map_points_blocks_init() {
 		true
 	);
 
-	// Register leaflet library.
+	// Register leaflet pip library.
+	wp_register_script(
+		'sunflower-leaflet-pip',
+		plugin_dir_url( __FILE__ ) . 'assets/vndr/@mapbox/leaflet-pip/leaflet-pip.min.js',
+		array(),
+		SUNFLOWER_MAP_POINTS_VERSION,
+		true
+	);
+
+	// Register leaflet marcercluster library.
 	wp_register_script(
 		'sunflower-leaflet-markercluster',
 		plugin_dir_url( __FILE__ ) . 'assets/vndr/leaflet.markercluster/dist/leaflet.markercluster.js',
@@ -242,3 +270,34 @@ add_action(
 		);
 	}
 );
+
+/**
+ * Allow GEOJSON uploads.
+ *
+ * @param string $mime_types The mime type for geojson files.
+ */
+function sunflower_allow_geojson_upload( $mime_types ) {
+	$mime_types['geojson'] = 'application/geo+json';
+	$mime_types['json']    = 'application/json';
+	return $mime_types;
+}
+add_filter( 'upload_mimes', 'sunflower_allow_geojson_upload' );
+
+/**
+ * Add detection of geojson files.
+ *
+ * @param array  $data Array with detected file parameter.
+ * @param string $file    Full path to the file.
+ * @param string $filename  The name of the file (may differ from $file due to.
+ */
+function sunflower_geojson_real_mime( $data, $file, $filename ) {
+	$ext = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
+
+	if ( 'geojson' === $ext ) {
+		$data['ext']  = 'geojson';
+		$data['type'] = 'application/geo+json';
+	}
+
+	return $data;
+}
+add_filter( 'wp_check_filetype_and_ext', 'sunflower_geojson_real_mime', 10, 4 );

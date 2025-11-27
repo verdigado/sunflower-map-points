@@ -48,6 +48,24 @@ add_action(
 				'permission_callback' => '__return_true',
 			)
 		);
+		register_rest_route(
+			'sunflower-map/v1',
+			'/update-poi-areas',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'callback'            => function ( WP_REST_Request $request ) {
+
+					$results = $request->get_param( 'results' );
+
+					foreach ( $results as $row ) {
+						update_post_meta( $row['id'], 'area', sanitize_text_field( $row['area'] ) );
+					}
+
+					return array( 'done' => true );
+				},
+			)
+		);
 	}
 );
 

@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Sunflower Map Points 1.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sunflower-map-"
 "points\n"
-"POT-Creation-Date: 2025-11-13T21:02:03+01:00\n"
-"PO-Revision-Date: 2025-11-13 21:03+0100\n"
+"POT-Creation-Date: 2025-11-24T08:41:55+01:00\n"
+"PO-Revision-Date: 2025-11-24 08:43+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -37,27 +37,27 @@ msgstr "Plugin zum Sammeln von Hinweisen über eine Karte."
 msgid "verdigado eG, Alexander Bigga"
 msgstr ""
 
-#: build/map/render.php:27 src/map/render.php:27
+#: build/map/render.php:43 src/map/render.php:43
 msgid "Report an issue"
 msgstr "Hinweis geben"
 
-#: build/map/render.php:28 src/map/render.php:28
+#: build/map/render.php:44 src/map/render.php:44
 msgid "Close"
 msgstr "Schließen"
 
-#: build/map/render.php:51 src/map/render.php:51
+#: build/map/render.php:68 src/map/render.php:68 sunflower-map-points.php:142
 msgid "Name"
 msgstr "Name"
 
-#: build/map/render.php:57 src/map/render.php:57
+#: build/map/render.php:74 src/map/render.php:74
 msgid "This information will <strong>not be published</strong>."
 msgstr "Diese Information wird <strong>nicht veröffentlicht</strong>."
 
-#: build/map/render.php:67 src/map/render.php:67
+#: build/map/render.php:84 src/map/render.php:84
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: build/map/render.php:73 src/map/render.php:73
+#: build/map/render.php:90 src/map/render.php:90
 msgid ""
 "Used only for follow-up questions and feedback. Will <strong>not be "
 "published</strong>."
@@ -65,24 +65,25 @@ msgstr ""
 "Ermöglicht Rückfragen und eine Rückmeldung. Wird <strong>nicht "
 "veröffentlicht</strong>."
 
-#: build/map/render.php:83 inc/export-csv.php:53 src/map/render.php:83
+#: build/map/render.php:100 inc/export-csv.php:53 src/map/render.php:100
+#: sunflower-map-points.php:144
 msgid "Phone"
 msgstr "Telefon"
 
-#: build/map/render.php:89 src/map/render.php:89
+#: build/map/render.php:106 src/map/render.php:106
 msgid "Optional, helps with inquiries. Will <strong>not be published</strong>."
 msgstr ""
 "Optional, hilft bei Rückfragen. Wird <strong>nicht veröffentlicht</strong>."
 
-#: build/map/render.php:99 src/map/render.php:99
+#: build/map/render.php:116 src/map/render.php:116 sunflower-map-points.php:149
 msgid "Topic"
 msgstr "Thema"
 
-#: build/map/render.php:110 src/map/render.php:110
+#: build/map/render.php:127 src/map/render.php:127 sunflower-map-points.php:145
 msgid "Hint"
 msgstr "Hinweis"
 
-#: build/map/render.php:114 src/map/render.php:114
+#: build/map/render.php:131 src/map/render.php:131
 msgid "Send"
 msgstr "Senden"
 
@@ -131,7 +132,23 @@ msgstr "Datum"
 msgid "Note"
 msgstr "Hinweis"
 
-#: build/map/index.js:347 src/map/edit.js:410 build/map/index.js:410
+#: sunflower-map-points.php:143
+msgid "Email"
+msgstr "E-Mail"
+
+#: sunflower-map-points.php:146
+msgid "Area"
+msgstr "Gebiet"
+
+#: sunflower-map-points.php:147
+msgid "Position"
+msgstr "Position"
+
+#: sunflower-map-points.php:148
+msgid "Map"
+msgstr "Karte"
+
+#: build/map/index.js:434 src/map/edit.js:517 build/map/index.js:517
 msgid "Formular-Einstellungen"
 msgstr ""
 
