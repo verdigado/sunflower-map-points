@@ -1,4 +1,6 @@
+/* global wp */
 /* global L */
+/* global leafletPip */
 /* global sunflowerMapPoints */
 /* global sunflowerMapPointsTopics */
 /**
@@ -25,10 +27,12 @@ import {
 	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
 
+import { store as coreStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import {
 	useLayoutEffect,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 } from '@wordpress/element';
@@ -48,7 +52,9 @@ import apiFetch from '@wordpress/api-fetch';
 export default function Edit( { attributes, setAttributes } ) {
 	const { lat, lng, zoom, height, mailTo, topics, showMarker } = attributes;
 
-	const areas = Array.isArray( attributes.areas ) ? attributes.areas : [];
+	const areas = useMemo( () => {
+		return Array.isArray( attributes.areas ) ? attributes.areas : [];
+	}, [ attributes.areas ] );
 
 	const mapContainerRef = useRef( null );
 	const leafletMapRef = useRef( null );
@@ -88,7 +94,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const allowedAreas = useSelect(
 		( select ) =>
-			( areas || [] ).map( ( id ) => select( 'core' ).getMedia( id ) ),
+			( areas || [] ).map( ( id ) => select( coreStore ).getMedia( id ) ),
 		[ areas ]
 	);
 
@@ -364,7 +370,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			library: {
 				type: [ 'application/json', 'application/geo+json' ],
 			},
-			button: { text: 'Hinzufügens' },
+			button: { text: 'Hinzufügen' },
 			multiple: true,
 		} );
 
@@ -392,6 +398,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		const map = leafletMapRef.current;
 
 		if (
+			// eslint-disable-next-line no-alert, no-undef
 			! confirm(
 				'Alle Marker anhand der aktuellen Gebietsflächen neu zuordnen?'
 			)
@@ -407,27 +414,20 @@ export default function Edit( { attributes, setAttributes } ) {
 			`/wp-json/sunflower-map/v1/pois?` +
 			`north=${ bounds.getNorth() }&south=${ bounds.getSouth() }&east=${ bounds.getEast() }&west=${ bounds.getWest() }`;
 
-		console.log( 'url:', url );
 		await fetch( url )
 			.then( ( res ) => res.json() )
 			.then( ( data ) => {
-				console.log( 'data (1): ', data );
 				data.forEach( ( poi ) => {
 					pois.push( poi );
 				} );
 			} );
-		console.log( 'pois (1): ', pois );
 
 		const results = [];
 
 		for ( const poi of pois ) {
-			console.log( 'poi: ', poi );
-
-			const latlng = L.latLng( poi.lat, poi.lng );
 			const point = [ poi.lng, poi.lat ];
 
 			const matched = [];
-			console.log( 'allowedLayers:', allowedLayers );
 
 			for ( const layer of allowedLayers ) {
 				const found = leafletPip.pointInLayer( point, layer, true );
@@ -444,7 +444,6 @@ export default function Edit( { attributes, setAttributes } ) {
 				}
 			}
 
-			console.log( 'matched', matched );
 			// Sort by index to get always the same order.
 			matched.sort( ( a, b ) => b.sortIndex - a.sortIndex );
 			results.push( {
@@ -453,15 +452,14 @@ export default function Edit( { attributes, setAttributes } ) {
 			} );
 		}
 
-		console.log( 'results: ', results );
-
-		// 3. Ergebnisse per REST speichern
+		// 3. Save via REST.
 		await apiFetch( {
 			path: '/sunflower-map/v1/update-poi-areas',
 			method: 'POST',
 			data: { results },
 		} );
 
+		// eslint-disable-next-line no-alert, no-undef
 		alert( 'Gebiete erfolgreich neu zugeordnet.' );
 	}
 
